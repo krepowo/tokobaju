@@ -14,7 +14,7 @@
                     dengan akun {{ auth()->user()->identity }}.
                 </p>
             @else
-                <h1>Selamat datang di Gavin Fashion Store</h1>
+                <h1>Selamat datang di Gavin Fashion Store Indonesia</h1>
                 <p class="muted">Masuk atau daftar untuk mulai berbelanja pakaian pilihan.</p>
             @endauth
         </div>
