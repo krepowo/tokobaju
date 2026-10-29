@@ -5,7 +5,7 @@
 @section('content')
     <header class="auth__head">
         <h2>Masuk ke Akun</h2>
-        <p>Masuk untuk melanjutkan belanja Anda di Gavin Fashion Store.</p>
+        <p>Masuk untuk melanjutkan belanja Anda di Gavin Fashion Store</p>
     </header>
 
     @if (session('success'))
@@ -23,7 +23,7 @@
             <label for="identity">Email atau Nomor Telepon</label>
             <input type="text" id="identity" name="identity" value="{{ old('identity') }}"
                    placeholder="Masukkan email atau nomor telepon"
-                   autocomplete="username" autofocus
+                   autocomplete="username"
                    class="@error('identity') is-invalid @enderror">
             @error('identity')
                 <span class="field__error">{{ $message }}</span>
@@ -37,7 +37,7 @@
                        autocomplete="current-password"
                        class="@error('password') is-invalid @enderror">
                 <button type="button" class="field__toggle" data-toggle-password="password" aria-label="Tampilkan kata sandi">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3.2"/></svg>
+                    <img src="{{ asset('images/figma/eye.svg') }}" alt="" aria-hidden="true">
                 </button>
             </div>
             @error('password')
@@ -45,12 +45,7 @@
             @enderror
         </div>
 
-        <label class="checkline">
-            <input type="checkbox" name="remember" value="1" @checked(old('remember'))>
-            <span>Ingat saya di perangkat ini</span>
-        </label>
-
-        <button type="submit" class="btn btn--block btn--lg">Masuk</button>
+        <button type="submit" class="btn btn--block">Masuk</button>
     </form>
 
     <p class="auth__switch">Belum punya akun? <a href="{{ route('register') }}">Daftar</a></p>
