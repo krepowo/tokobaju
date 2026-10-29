@@ -1,38 +1,49 @@
+@php
+    $shopLinks = ['Beranda', 'Katalog', 'Pesanan Saya', 'Atasan', 'Bawahan', 'Outer', 'Dress', 'Aksesoris', 'Hijab', 'Sepatu'];
+    $orderInfo = [
+        'Pembayaran Via Transfer 1x24 jam',
+        'Tidak Melayani COD',
+        'Pengiriman JNE, J&T, GoSend, GoShop',
+    ];
+@endphp
+
 <footer class="site-footer">
     <div class="site-footer__inner">
-        <div class="site-footer__grid">
-            <div class="site-footer__brand">
-                @include('partials.brand', ['variant' => 'light'])
-                <p>Temukan gaya terbaikmu, pakaian pilihan untuk gaya sehari-hari.</p>
-            </div>
-
-            <div>
-                <h4>Belanja &amp; Kategori</h4>
-                <ul>
-                    <li><a href="{{ route('home') }}">Beranda</a></li>
-                    <li><a href="#">Katalog</a></li>
-                    <li><a href="#">Pesanan Saya</a></li>
-                </ul>
-            </div>
-
-            <div>
-                <h4>Informasi Pesanan</h4>
-                <ul>
-                    <li>Pembayaran transfer 1&times;24 jam</li>
-                    <li>Tidak melayani COD</li>
-                    <li>Pengiriman JNE, J&amp;T, GoSend, GoShop</li>
-                </ul>
-            </div>
-
-            <div>
-                <h4>Hubungi Kami</h4>
-                <ul>
-                    <li>Konfirmasi pembayaran dan pertanyaan pesanan</li>
-                    <li>089123-1234-1234</li>
-                </ul>
-            </div>
+        <div class="site-footer__brand">
+            <span class="site-footer__wordmark">Gavin Fashion<br>Store</span>
+            <p class="site-footer__tagline">Temukan gaya terbaikmu, pakaian pilihan untuk gaya sehari-hari.</p>
+            <p class="site-footer__note">
+                Kurasi busana kontemporer esensial<br>
+                dengan sentuhan eksklusif dan material<br>
+                premium untuk kepuasan berbusana<br>
+                modern.
+            </p>
         </div>
 
-        <p class="site-footer__copy">&copy; {{ date('Y') }} Gavin Fashion Store. Hak cipta dilindungi.</p>
+        <div class="site-footer__col">
+            <h4>Belanja &amp; Kategori</h4>
+            <ul>
+                @foreach ($shopLinks as $link)
+                    <li><a href="{{ $link === 'Beranda' ? route('home') : '#' }}">{{ $link }}</a></li>
+                @endforeach
+            </ul>
+        </div>
+
+        <div class="site-footer__col">
+            <h4>Informasi Pesanan</h4>
+            <ul>
+                @foreach ($orderInfo as $item)
+                    <li>{{ $item }}</li>
+                @endforeach
+            </ul>
+        </div>
+
+        <div class="site-footer__col">
+            <h4>Hubungi kami:</h4>
+            <p class="site-footer__help">untuk konfirmasi pembayaran dan pertanyaan pesanan</p>
+            <p class="site-footer__phone">089123-1234-1234-1234</p>
+        </div>
+
+        <p class="site-footer__copy">&copy; {{ date('Y') }} Gavin Fashion Store. Hak Cipta Dilindungi.</p>
     </div>
 </footer>

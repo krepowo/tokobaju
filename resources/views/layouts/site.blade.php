@@ -9,7 +9,7 @@
 <body class="site-body">
     @include('partials.header', ['active' => trim($__env->yieldContent('active'))])
 
-    <main class="site-main">
+    <main class="site-main {{ trim($__env->yieldContent('main_class')) }}">
         @if (session('success'))
             <div class="alert alert--success" style="margin-bottom:22px">{{ session('success') }}</div>
         @endif

@@ -1,39 +1,54 @@
 @php
     $active = $active ?? '';
+    $firstName = auth()->check() ? \Illuminate\Support\Str::of(auth()->user()->name)->before(' ') : null;
 @endphp
 
 <header class="site-header">
     <div class="site-header__inner">
-        <a href="{{ route('home') }}" aria-label="Gavin Fashion Store">
-            @include('partials.brand', ['variant' => 'light'])
+        <a href="{{ route('home') }}" class="hdr-brand" aria-label="Gavin Fashion Store">
+            <span class="hdr-brand__mark">
+                <img src="{{ asset('images/figma/home/logo-mark.png') }}" alt="">
+            </span>
+            <span class="hdr-brand__name">Gavin Fashion Store</span>
         </a>
 
-        <nav class="site-nav" aria-label="Navigasi utama">
+        <nav class="hdr-nav" aria-label="Navigasi utama">
             <a href="{{ route('home') }}" class="{{ $active === 'beranda' ? 'is-active' : '' }}">Beranda</a>
             <a href="#" class="is-disabled" title="Segera hadir">Katalog</a>
-            <a href="#" class="is-disabled" title="Segera hadir">Kategori</a>
+            <a href="#" class="is-disabled" title="Segera hadir">
+                Kategori
+                <img class="hdr-nav__caret" src="{{ asset('images/figma/home/ico-arrow-down.svg') }}" alt="">
+            </a>
             <a href="#" class="is-disabled" title="Segera hadir">Pesanan Saya</a>
         </nav>
 
-        <div class="site-header__actions">
-            <span class="icon-btn" title="Keranjang" aria-hidden="true">
-                <svg viewBox="0 0 24 24"><path d="M6 8h12l-1.2 11.2a1.6 1.6 0 0 1-1.6 1.4H8.8a1.6 1.6 0 0 1-1.6-1.4L6 8Z"/><path d="M9.2 8V6.4a2.8 2.8 0 0 1 5.6 0V8"/></svg>
-            </span>
+        <div class="hdr-actions">
+            <button type="button" class="hdr-icon" aria-label="Cari produk">
+                <img src="{{ asset('images/figma/home/ico-search.svg') }}" alt="">
+            </button>
 
             @auth
-                <span class="user-pill">
-                    <span class="user-pill__dot"></span>
-                    {{ auth()->user()->name }}
-                </span>
+                <a href="{{ auth()->user()->isPenjual() ? route('admin.home') : route('home') }}" class="hdr-cta">
+                    Halo, {{ $firstName }}
+                </a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="icon-btn" title="Keluar" aria-label="Keluar">
-                        <svg viewBox="0 0 24 24"><path d="M14.5 8.5V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v12A1.5 1.5 0 0 0 6 19.5h7a1.5 1.5 0 0 0 1.5-1.5v-2.5"/><path d="M10 12h9.5"/><path d="M16.5 8.8 19.7 12l-3.2 3.2"/></svg>
+                    <button type="submit" class="hdr-avatar" title="Keluar" aria-label="Keluar">
+                        <img src="{{ asset('images/figma/home/ico-user.svg') }}" alt="">
                     </button>
                 </form>
             @else
-                <a href="{{ route('login') }}" class="user-pill">Masuk / Daftar</a>
+                <a href="{{ route('login') }}" class="hdr-cta">Masuk / Daftar</a>
+                <a href="{{ route('login') }}" class="hdr-avatar" title="Masuk ke akun" aria-label="Masuk ke akun">
+                    <img src="{{ asset('images/figma/home/ico-user.svg') }}" alt="">
+                </a>
             @endauth
         </div>
     </div>
+    <nav class="hdr-navmob" aria-label="Navigasi utama (seluler)">
+        <a href="{{ route('home') }}" class="{{ $active === 'beranda' ? 'is-active' : '' }}">Beranda</a>
+        <a href="#" class="is-disabled">Katalog</a>
+        <a href="#" class="is-disabled">Kategori</a>
+        <a href="#" class="is-disabled">Pesanan Saya</a>
+    </nav>
 </header>
