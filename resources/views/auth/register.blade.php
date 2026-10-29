@@ -2,10 +2,12 @@
 
 @section('title', 'Registrasi')
 
+@section('card_modifier', 'auth__card--tall')
+
 @section('content')
     <header class="auth__head">
         <h2>Buat Akun Baru</h2>
-        <p>Daftar untuk mulai berbelanja di Gavin Fashion Store.</p>
+        <p>Daftar untuk mulai berbelanja di Gavin Fashion Store</p>
     </header>
 
     <form method="POST" action="{{ route('register.store') }}" class="form" novalidate>
@@ -14,7 +16,7 @@
         <div class="field">
             <label for="name">Nama Lengkap</label>
             <input type="text" id="name" name="name" value="{{ old('name') }}"
-                   placeholder="Masukkan nama lengkap" autocomplete="name" autofocus
+                   placeholder="Masukkan nama lengkap" autocomplete="name"
                    class="@error('name') is-invalid @enderror">
             @error('name')
                 <span class="field__error">{{ $message }}</span>
@@ -44,11 +46,11 @@
         <div class="field">
             <label for="password">Kata Sandi</label>
             <div class="field__password">
-                <input type="password" id="password" name="password" placeholder="Buat kata sandi"
+                <input type="password" id="password" name="password" placeholder="Minimal 8 karakter"
                        autocomplete="new-password"
                        class="@error('password') is-invalid @enderror">
                 <button type="button" class="field__toggle" data-toggle-password="password" aria-label="Tampilkan kata sandi">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3.2"/></svg>
+                    <img src="{{ asset('images/figma/eye.svg') }}" alt="" aria-hidden="true">
                 </button>
             </div>
             <span class="field__hint">Gunakan minimal 8 karakter.</span>
@@ -57,7 +59,7 @@
             @enderror
         </div>
 
-        <button type="submit" class="btn btn--block btn--lg">Daftar Sekarang</button>
+        <button type="submit" class="btn btn--block">Daftar Sekarang</button>
     </form>
 
     <p class="auth__switch">Sudah punya akun? <a href="{{ route('login') }}">Masuk</a></p>

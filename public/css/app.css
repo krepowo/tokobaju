@@ -1,3 +1,11 @@
+@font-face {
+    font-family: "Inter";
+    src: url("../fonts/inter-var.woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
 /* ==========================================================================
    Gavin Fashion Store — design system
    Palet netral: putih, hitam, abu. Tanpa tone krem/emas.
@@ -42,6 +50,7 @@
 
     --font-sans: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
     --font-serif: Georgia, "Times New Roman", serif;
+    --font-inter: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, Arial, sans-serif;
 
     caret-color: var(--ink);
 }
@@ -316,77 +325,232 @@ button { font: inherit; }
 .alert--info    { background: var(--info-soft); border-color: var(--info-line); color: var(--info); }
 
 /* =========================================================== auth page ==== */
-.auth-body { background: var(--paper); }
+/* Ukuran diambil dari Figma:
+   01-Halaman Registrasi (21:3) & 02-Halaman Login (31:776)
+   Frame 1280x832, split 640/640, card 457px, padding 37.4px, radius 12.5px. */
+
+.auth-body {
+    background: #f8f9fa;
+    font-family: var(--font-inter);
+}
 
 .auth {
     display: grid;
-    grid-template-columns: 1.05fr .95fr;
+    grid-template-columns: 1fr 1fr;
     min-height: 100vh;
+    background: #f8f9fa;
 }
 
-.auth__brand {
+/* ------------------------------------------- panel kiri (foto + veil) --- */
+.auth__visual {
     position: relative;
-    min-height: 100%;
-    background: var(--ink) url("../images/auth-hero.jpg") center center / cover no-repeat;
+    overflow: hidden;
+    min-height: 100vh;
+    background: #111;
 }
 
+.auth__photo {
+    position: absolute;
+    top: 0;
+    left: -1.5625%;
+    width: 101.5625%;
+    height: 104.21%;
+    background: url("../images/figma/hero.jpg") center center / cover no-repeat;
+}
+
+.auth__veil {
+    position: absolute;
+    inset: 0;
+    background: #000;
+    opacity: .8;
+}
+
+.auth__logo {
+    position: absolute;
+    z-index: 2;
+    top: 29.688%;
+    left: 29.375%;
+    width: 39.688%;
+    height: 25.962%;
+    object-fit: cover;
+    object-position: center bottom;
+}
+
+.auth__tagline {
+    position: absolute;
+    z-index: 2;
+    left: 11.25%;
+    top: 62.019%;
+    transform: translateY(-50%);
+    margin: 0;
+    font-size: clamp(26px, 3.125vw, 40px);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -.015em;
+    color: #fff;
+    white-space: nowrap;
+}
+
+.auth__tagsub {
+    position: absolute;
+    z-index: 2;
+    left: 20.781%;
+    top: 68.75%;
+    transform: translateY(-50%);
+    margin: 0;
+    font-size: clamp(14px, 1.5625vw, 20px);
+    line-height: 1.2;
+    color: #d1d5db;
+    white-space: nowrap;
+}
+
+/* ------------------------------------------------- panel kanan (kartu) --- */
 .auth__panel {
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 22px;
-    padding: 44px 32px;
-    background: var(--panel);
+    padding: 32px 24px;
+    background: #f8f9fa;
 }
 
 .auth__card {
     width: 100%;
-    max-width: 440px;
-    display: grid;
-    gap: 24px;
-    padding: 38px 34px 34px;
-    background: var(--paper);
-    border: 1px solid var(--line);
-    border-radius: 20px;
-    box-shadow: var(--shadow-md);
+    max-width: 457px;
+    min-height: 489px;
+    display: flex;
+    flex-direction: column;
+    padding: 37.4px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12.5px;
+    box-shadow: 0 1.04px 1.04px rgba(0, 0, 0, .05);
 }
 
-.auth__head { display: grid; gap: 8px; }
+.auth__card--tall { min-height: 676px; margin-top: 24px; }
 
 .auth__head h2 {
-    font-family: var(--font-serif);
-    font-size: 29px;
-    font-weight: 400;
-    color: var(--ink);
+    margin: 0;
+    font-size: 29.1px;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -.01em;
+    color: #1a1a1a;
 }
 
 .auth__head p {
-    font-size: 14px;
-    color: var(--muted);
+    margin: 7.6px 0 0;
+    font-size: 15.6px;
+    line-height: 1.5;
+    color: #6b6b6b;
 }
 
-.auth__switch {
+.auth__card .form {
+    margin-top: 26.3px;
+    gap: 18.7px;
+}
+
+.auth__card .field { gap: 0; }
+
+.auth__card .field > label {
+    margin-bottom: 6.2px;
+    font-size: 14.5px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: #1a1a1a;
+}
+
+.auth__card .field input,
+.auth__card .field select,
+.auth__card .field textarea {
+    height: 45.7px;
+    padding: 0 15.6px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8.3px;
+    background: #fff;
+    font-size: 15.6px;
+    color: #1a1a1a;
+}
+
+.auth__card .field input::placeholder { color: rgba(107, 107, 107, .6); }
+
+.auth__card .field input:focus,
+.auth__card .field select:focus,
+.auth__card .field textarea:focus {
+    outline: none;
+    border-color: #1a1a1a;
+    box-shadow: 0 0 0 3px rgba(17, 17, 17, .08);
+}
+
+.auth__card .field input.is-invalid { border-color: #dca9a3; }
+
+.auth__card .field__hint {
+    margin-top: 3.1px;
     font-size: 13.5px;
-    color: var(--muted);
+    line-height: 1.5;
+    color: #6b6b6b;
+}
+
+.auth__card .field__error {
+    margin-top: 4px;
+    font-size: 12.5px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: #b42318;
+}
+
+.auth__card .field__password input { padding-right: 46.7px; }
+
+.auth__card .field__toggle {
+    right: 14.5px;
+    width: 20.8px;
+    height: 20.8px;
+    border-radius: 0;
+    color: #6b6b6b;
+}
+
+.auth__card .field__toggle:hover { background: transparent; opacity: .65; }
+
+.auth__card .field__toggle img {
+    display: block;
+    width: 20.8px;
+    height: 20.8px;
+}
+
+.auth__card .btn {
+    height: 50px;
+    border: 0;
+    border-radius: 8.3px;
+    background: #111;
+    color: #fff;
+    font-size: 15.6px;
+    font-weight: 600;
+    letter-spacing: 0;
+}
+
+.auth__card .btn:hover { background: #000; }
+.auth__card .btn:focus-visible { outline: 2px solid #111; outline-offset: 2px; }
+
+.auth__card .alert { margin-top: 12px; font-size: 13px; }
+
+.auth__switch {
+    margin: auto 0 0;
+    padding-top: 18.7px;
+    font-size: 14.5px;
+    line-height: 1.5;
+    color: #6b6b6b;
     text-align: center;
 }
 
 .auth__switch a {
-    font-weight: 600;
-    color: var(--ink);
+    font-weight: 700;
+    color: #1a1a1a;
     text-decoration: underline;
-    text-decoration-color: var(--line-strong);
-    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
 }
 
-.auth__switch a:hover { text-decoration-color: var(--ink); }
-
-.auth__foot {
-    font-size: 11.5px;
-    color: var(--muted-soft);
-    letter-spacing: .02em;
-}
+.auth__switch a:hover { color: #000; }
+.auth__switch a:focus-visible { outline: 2px solid #111; outline-offset: 2px; border-radius: 2px; }
 
 /* =========================================================== site page ==== */
 .site-body { background: var(--canvas); }
@@ -607,17 +771,29 @@ button { font: inherit; }
 /* ----------------------------------------------------------- responsive --- */
 @media (max-width: 980px) {
     .auth { grid-template-columns: 1fr; }
-    .auth__brand {
-        min-height: 240px;
-        background-position: center 28%;
+    .auth__visual { min-height: 250px; max-height: 250px; }
+    .auth__photo { left: 0; width: 100%; height: 100%; background-position: center 35%; }
+    .auth__logo {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 150px;
+        height: 128px;
     }
-    .auth__panel { padding: 40px 24px 56px; }
+    .auth__tagline,
+    .auth__tagsub { display: none; }
+    .auth__panel { padding: 32px 20px 48px; }
+    .auth__card { min-height: 0; }
     .site-nav { display: none; }
     .site-footer__grid { grid-template-columns: 1fr 1fr; }
     .grid-2 { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 620px) {
+    .auth__card { padding: 26px 22px; }
+    .auth__head h2 { font-size: 24px; }
+    .auth__head p { font-size: 14.5px; }
+    .auth__switch { font-size: 14px; }
     .site-header__inner { padding: 12px 18px; gap: 14px; }
     .site-main { padding: 26px 18px 56px; }
     .panel { padding: 26px 20px; }
