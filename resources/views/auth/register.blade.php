@@ -22,13 +22,21 @@
         </div>
 
         <div class="field">
-            <label for="identity">Email atau Nomor Telepon</label>
-            <input type="text" id="identity" name="identity" value="{{ old('identity') }}"
-                   placeholder="nama@email.com atau 081234567890."
-                   autocomplete="username"
-                   class="@error('identity') is-invalid @enderror">
-            <span class="field__hint"></span>
-            @error('identity')
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="{{ old('email') }}"
+                   placeholder="Masukkan email" autocomplete="email"
+                   class="@error('email') is-invalid @enderror">
+            @error('email')
+                <span class="field__error">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <div class="field">
+            <label for="phone">Nomor Telepon</label>
+            <input type="tel" id="phone" name="phone" value="{{ old('phone') }}"
+                   placeholder="Masukkan No Telepon" autocomplete="tel" inputmode="tel"
+                   class="@error('phone') is-invalid @enderror">
+            @error('phone')
                 <span class="field__error">{{ $message }}</span>
             @enderror
         </div>
