@@ -343,6 +343,10 @@ button { font: inherit; }
 
 /* ------------------------------------------- panel kiri (foto + veil) --- */
 .auth__visual {
+    /* 1 unit = 1px pada frame Figma 640x832.
+       min() membuat panggung selalu muat (contain) di panel kiri,
+       jadi komposisi tidak berubah saat browser di-zoom atau layar lebar. */
+    --u: min(0.078125vw, 0.1201923vh);
     position: relative;
     overflow: hidden;
     min-height: 100vh;
@@ -351,10 +355,7 @@ button { font: inherit; }
 
 .auth__photo {
     position: absolute;
-    top: 0;
-    left: -1.5625%;
-    width: 101.5625%;
-    height: 104.21%;
+    inset: 0;
     background: url("../images/figma/hero.jpg") center center / cover no-repeat;
 }
 
@@ -365,25 +366,34 @@ button { font: inherit; }
     opacity: .8;
 }
 
-.auth__logo {
+/* Panggung 640x832: seluruh isi panel kiri diskalakan sebagai satu kesatuan */
+.auth__stage {
     position: absolute;
     z-index: 2;
-    top: 29.688%;
-    left: 29.375%;
-    width: 39.688%;
-    height: 25.962%;
+    left: 50%;
+    top: 50%;
+    width: calc(640 * var(--u));
+    height: calc(832 * var(--u));
+    transform: translate(-50%, -50%);
+}
+
+.auth__logo {
+    position: absolute;
+    top: calc(247 * var(--u));
+    left: calc(188 * var(--u));
+    width: calc(254 * var(--u));
+    height: calc(216 * var(--u));
     object-fit: cover;
     object-position: center bottom;
 }
 
 .auth__tagline {
     position: absolute;
-    z-index: 2;
-    left: 11.25%;
-    top: 62.019%;
+    left: calc(72 * var(--u));
+    top: calc(516 * var(--u));
     transform: translateY(-50%);
     margin: 0;
-    font-size: clamp(26px, 3.125vw, 40px);
+    font-size: calc(40 * var(--u));
     font-weight: 600;
     line-height: 1;
     letter-spacing: -.015em;
@@ -393,12 +403,11 @@ button { font: inherit; }
 
 .auth__tagsub {
     position: absolute;
-    z-index: 2;
-    left: 20.781%;
-    top: 68.75%;
+    left: calc(133 * var(--u));
+    top: calc(572 * var(--u));
     transform: translateY(-50%);
     margin: 0;
-    font-size: clamp(14px, 1.5625vw, 20px);
+    font-size: calc(20 * var(--u));
     line-height: 1.2;
     color: #d1d5db;
     white-space: nowrap;
@@ -772,7 +781,13 @@ button { font: inherit; }
 @media (max-width: 980px) {
     .auth { grid-template-columns: 1fr; }
     .auth__visual { min-height: 250px; max-height: 250px; }
-    .auth__photo { left: 0; width: 100%; height: 100%; background-position: center 35%; }
+    .auth__photo { background-position: center 35%; }
+    .auth__stage {
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        transform: none;
+    }
     .auth__logo {
         top: 50%;
         left: 50%;

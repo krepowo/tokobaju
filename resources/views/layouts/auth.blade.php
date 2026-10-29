@@ -12,9 +12,11 @@
         <aside class="auth__visual">
             <div class="auth__photo" role="img" aria-label="Interior Gavin Fashion Store"></div>
             <div class="auth__veil" aria-hidden="true"></div>
-            <img class="auth__logo" src="{{ asset('images/figma/logo.png') }}" alt="Gavin Fashion Store">
-            <p class="auth__tagline">Temukan gaya terbaikmu</p>
-            <p class="auth__tagsub">Pakaian pilihan untuk gaya sehari-hari.</p>
+            <div class="auth__stage">
+                <img class="auth__logo" src="{{ asset('images/figma/logo.png') }}" alt="Gavin Fashion Store">
+                <p class="auth__tagline">Temukan gaya terbaikmu</p>
+                <p class="auth__tagsub">Pakaian pilihan untuk gaya sehari-hari.</p>
+            </div>
         </aside>
 
         <main class="auth__panel">
