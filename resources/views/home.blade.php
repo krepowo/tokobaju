@@ -65,7 +65,7 @@
 
         <div class="products__grid">
             @foreach ($products as $product)
-                <a href="#" class="pcard">
+                <a href="{{ route('produk.detail', $product['id']) }}" class="pcard">
                     <span class="pcard__media">
                         <img src="{{ asset($product['image']) }}" alt="{{ $product['name'] }}">
                     </span>

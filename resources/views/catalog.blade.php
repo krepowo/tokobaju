@@ -96,6 +96,7 @@
         <section class="catalog__grid">
             @forelse ($products as $p)
                 <article class="ccard">
+                    <a href="{{ route('produk.detail', $p['id']) }}" class="ccard__link" aria-label="Lihat {{ $p['name'] }}"></a>
                     <div class="ccard__media">
                         <img src="{{ asset($p['image']) }}" alt="{{ $p['name'] }}" loading="lazy">
                         @if ($p['stok_habis'])

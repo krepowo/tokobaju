@@ -27,6 +27,7 @@ class HomeController extends Controller
             ->take(4)
             ->get()
             ->map(fn (Produk $p) => [
+                'id' => $p->id_produk,
                 'name' => $p->nama_produk,
                 'category' => $p->kategori?->nama_kategori,
                 'rating' => $p->ulasan_count > 0
