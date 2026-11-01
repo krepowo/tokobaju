@@ -64,10 +64,13 @@
                 </div>
             </div>
 
-            <div class="detail__actions">
-                <button type="button" class="detail__btn detail__btn--cart" data-action="cart">Tambah ke Keranjang</button>
-                <button type="button" class="detail__btn detail__btn--buy" data-action="buy">Beli Sekarang</button>
-            </div>
+            <form method="POST" action="{{ route('keranjang.store') }}" class="detail__actions" id="detailCartForm">
+                @csrf
+                <input type="hidden" name="id_ukuran" id="detailUkuranHidden">
+                <input type="hidden" name="jumlah" id="detailJumlahHidden" value="1">
+                <button type="submit" name="mode" value="tambah" class="detail__btn detail__btn--cart">Tambah ke Keranjang</button>
+                <button type="submit" name="mode" value="beli" class="detail__btn detail__btn--buy">Beli Sekarang</button>
+            </form>
 
             @if (! empty($spesifikasi))
                 <details class="detail__spec">
@@ -124,6 +127,9 @@
     var warnaLabel = document.getElementById('detailWarnaLabel');
     var selectedWarna = Object.keys(VARIAN)[0];
     var selectedUkuran = null;
+    var selectedId = null;
+    var hiddenId = document.getElementById('detailUkuranHidden');
+    var hiddenJumlah = document.getElementById('detailJumlahHidden');
 
     function findFirstAvailable(rows) {
         var hit = null;
@@ -135,6 +141,7 @@
         var rows = VARIAN[selectedWarna] || [];
         var first = findFirstAvailable(rows);
         selectedUkuran = first ? first.ukuran : null;
+        selectedId = first ? first.id : null;
         ukuranBox.innerHTML = '';
 
         rows.forEach(function (r) {
@@ -145,6 +152,7 @@
             b.disabled = !(r.aktif && r.stok > 0);
             b.addEventListener('click', function () {
                 selectedUkuran = r.ukuran;
+                selectedId = r.id;
                 Array.prototype.forEach.call(ukuranBox.children, function (x) {
                     x.classList.toggle('is-active', x.textContent === selectedUkuran);
                 });
@@ -181,11 +189,13 @@
         qty.value = Math.max(1, v + parseInt(step.getAttribute('data-step'), 10));
     });
 
-    Array.prototype.forEach.call(document.querySelectorAll('[data-action]'), function (btn) {
-        btn.addEventListener('click', function () {
-            alert('Fitur ini tersedia pada tahap berikutnya (Keranjang / Checkout).');
+    var cartForm = document.getElementById('detailCartForm');
+    if (cartForm) {
+        cartForm.addEventListener('submit', function () {
+            hiddenId.value = selectedId || '';
+            hiddenJumlah.value = qty.value;
         });
-    });
+    }
 
     renderUkuran();
 })();

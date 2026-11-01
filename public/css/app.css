@@ -1539,3 +1539,53 @@ button { font: inherit; }
     .detail__actions { flex-direction: column; }
     .detail__btn { width: 100%; }
 }
+
+
+/* =============================== keranjang =============================== */
+.cart { max-width: 1280px; margin: 0 auto; padding: 29px 48px 96px; }
+.cart__title { font-size: 27.611px; font-weight: 600; color: #111; margin-bottom: 22px; }
+.cart__empty { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 70px 0; color: #757575; }
+.cart__cta { display: inline-flex; align-items: center; min-height: 44px; padding: 0 28px; background: #ffd577; color: #795a01; font-weight: 600; border-radius: 8px; }
+.cart__cta:hover { filter: brightness(1.04); }
+
+.cart__layout { display: flex; align-items: flex-start; gap: 28px; }
+.cart__items { flex: 1; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+
+.cart-item { display: flex; align-items: center; gap: 16px; background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 14px 16px; }
+.cart-item__pilih input { width: 17px; height: 17px; accent-color: #c8a24a; cursor: pointer; }
+.cart-item__img { width: 76px; height: 76px; border-radius: 8px; object-fit: cover; background: #f0efea; flex: none; }
+.cart-item__info { flex: 1; min-width: 0; }
+.cart-item__name { font-size: 15px; font-weight: 600; color: #111; }
+.cart-item__name:hover { color: #c8a24a; }
+.cart-item__variant { font-size: 13px; color: #757575; margin: 3px 0; }
+.cart-item__price { font-size: 14px; color: #111; margin: 0; }
+.cart-item__qty { display: inline-flex; align-items: center; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; flex: none; }
+.cart-item__qty button { width: 32px; height: 34px; border: 0; background: #fff; font-size: 16px; cursor: pointer; color: #111; }
+.cart-item__qty button:disabled { color: #bbb; cursor: not-allowed; }
+.cart-item__qty span { width: 40px; text-align: center; font-size: 14px; }
+.cart-item__subtotal { width: 112px; text-align: right; font-weight: 600; color: #111; flex: none; margin: 0; }
+.cart-item__hapus button { width: 34px; height: 34px; border: 0; background: transparent; font-size: 20px; color: #999; cursor: pointer; border-radius: 8px; }
+.cart-item__hapus button:hover { color: #b3261e; background: #fdecea; }
+
+.cart__summary { flex: 0 0 300px; background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; position: sticky; top: 96px; }
+.cart__summary h2 { font-size: 16px; font-weight: 600; color: #111; margin-bottom: 14px; }
+.cart__summary-row { display: flex; justify-content: space-between; font-size: 14px; color: #444748; padding: 6px 0; }
+.cart__summary-row--total { font-size: 16px; font-weight: 700; color: #111; border-top: 1px solid #eee; margin-top: 8px; padding-top: 12px; }
+.cart__checkout { width: 100%; min-height: 46px; background: #ffd577; color: #795a01; border: 0; border-radius: 8px; font-weight: 600; font-size: 15px; margin-top: 16px; cursor: pointer; }
+.cart__checkout:disabled { background: #f0f0f0; color: #aaa; cursor: not-allowed; }
+.cart__hint { font-size: 12px; color: #999; text-align: center; margin: 8px 0 0; }
+
+.alert--error { background: #fdecea; color: #b3261e; border: 1px solid #f5c6c0; padding: 12px 16px; border-radius: 8px; }
+
+/* header cart */
+.hdr-cart { position: relative; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; color: #c4c7c7; flex: none; }
+.hdr-cart:hover { color: #fff; }
+.hdr-cart__count { position: absolute; top: 0; right: -2px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: #ffd577; color: #795a01; font-size: 11px; font-weight: 700; display: grid; place-items: center; }
+
+@media (max-width: 760px) {
+    .cart { padding: 24px 20px 64px; }
+    .cart__layout { flex-direction: column; }
+    .cart__summary { flex: none; width: 100%; position: static; }
+    .cart-item { flex-wrap: wrap; gap: 10px; }
+    .cart-item__subtotal { width: auto; margin-left: auto; }
+}

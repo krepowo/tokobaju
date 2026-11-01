@@ -14,6 +14,10 @@
             <div class="alert alert--success" style="margin-bottom:22px">{{ session('success') }}</div>
         @endif
 
+        @if (session('error'))
+            <div class="alert alert--error" style="margin-bottom:22px">{{ session('error') }}</div>
+        @endif
+
         @yield('content')
     </main>
 

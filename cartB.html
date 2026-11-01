@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Keranjang &middot; Gavin Fashion Store</title>
+    <link rel="stylesheet" href="http://127.0.0.1:8000/css/app.css">
+</head>
+<body class="site-body">
+    <header class="site-header">
+    <div class="site-header__inner">
+        <a href="http://127.0.0.1:8000" class="hdr-brand" aria-label="Gavin Fashion Store">
+            <span class="hdr-brand__mark">
+                <img src="http://127.0.0.1:8000/images/figma/home/logo-mark.png" alt="">
+            </span>
+            <span class="hdr-brand__name">Gavin Fashion Store</span>
+        </a>
+
+        <nav class="hdr-nav" aria-label="Navigasi utama">
+            <a href="http://127.0.0.1:8000" class="">Beranda</a>
+            <a href="http://127.0.0.1:8000/katalog" class="">Katalog</a>
+            <a href="#" class="is-disabled" title="Segera hadir">
+                Kategori
+                <img class="hdr-nav__caret" src="http://127.0.0.1:8000/images/figma/home/ico-arrow-down.svg" alt="">
+            </a>
+            <a href="#" class="is-disabled" title="Segera hadir">Pesanan Saya</a>
+        </nav>
+
+        <div class="hdr-actions">
+                                                <a href="http://127.0.0.1:8000/keranjang" class="hdr-cart" aria-label="Keranjang">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/>
+                            <path d="M3 6h18"/>
+                            <path d="M16 10a4 4 0 0 1-8 0"/>
+                        </svg>
+                                                    <span class="hdr-cart__count">3</span>
+                                            </a>
+                                        <button type="button" class="hdr-icon" aria-label="Cari produk">
+                <img src="http://127.0.0.1:8000/images/figma/home/ico-search.svg" alt="">
+            </button>
+
+                            <a href="http://127.0.0.1:8000" class="hdr-cta">
+                    Halo, Annisa
+                </a>
+                <form method="POST" action="http://127.0.0.1:8000/logout">
+                    <input type="hidden" name="_token" value="UfjWrZxriG3ddI5q4I0yedNx41wgAuW0tWA61BqK" autocomplete="off">                    <button type="submit" class="hdr-avatar" title="Keluar" aria-label="Keluar">
+                        <img src="http://127.0.0.1:8000/images/figma/home/ico-user.svg" alt="">
+                    </button>
+                </form>
+                    </div>
+    </div>
+    <nav class="hdr-navmob" aria-label="Navigasi utama (seluler)">
+        <a href="http://127.0.0.1:8000" class="">Beranda</a>
+        <a href="http://127.0.0.1:8000/katalog" class="">Katalog</a>
+        <a href="#" class="is-disabled">Kategori</a>
+        <a href="#" class="is-disabled">Pesanan Saya</a>
+    </nav>
+</header>
+
+    <main class="site-main site-main--catalog">
+                    <div class="alert alert--success" style="margin-bottom:22px">Item dihapus dari keranjang.</div>
+        
+        
+        <div class="cart">
+    <h1 class="cart__title">Keranjang</h1>
+
+            <div class="cart__layout">
+            <div class="cart__items">
+                                    <article class="cart-item">
+                        <form method="POST" action="http://127.0.0.1:8000/keranjang/55f939f6-ed25-419f-b0f8-0c884d99446e/pilih" class="cart-item__pilih">
+                            <input type="hidden" name="_token" value="UfjWrZxriG3ddI5q4I0yedNx41wgAuW0tWA61BqK" autocomplete="off">                            <input type="checkbox" checked onchange="this.form.submit()"
+                                   aria-label="Pilih Floral Summer Wrap Dress untuk checkout">
+                        </form>
+
+                        <img class="cart-item__img" src="http://127.0.0.1:8000/images/figma/katalog/prod-wrap-dress.png" alt="Floral Summer Wrap Dress">
+
+                        <div class="cart-item__info">
+                            <a href="http://127.0.0.1:8000/produk/fa1109dd-1efe-453b-a522-d145a1520fd1" class="cart-item__name">Floral Summer Wrap Dress</a>
+                            <p class="cart-item__variant">Warna: Floral &middot; Ukuran: S</p>
+                            <p class="cart-item__price">Rp 319.000</p>
+                        </div>
+
+                        <form method="POST" action="http://127.0.0.1:8000/keranjang/55f939f6-ed25-419f-b0f8-0c884d99446e/update" class="cart-item__qty">
+                            <input type="hidden" name="_token" value="UfjWrZxriG3ddI5q4I0yedNx41wgAuW0tWA61BqK" autocomplete="off">                            <button type="submit" name="jumlah" value="0" disabled aria-label="Kurangi jumlah">&minus;</button>
+                            <span>1</span>
+                            <button type="submit" name="jumlah" value="2" aria-label="Tambah jumlah">+</button>
+                        </form>
+
+                        <p class="cart-item__subtotal">Rp 319.000</p>
+
+                        <form method="POST" action="http://127.0.0.1:8000/keranjang/55f939f6-ed25-419f-b0f8-0c884d99446e/hapus" class="cart-item__hapus">
+                            <input type="hidden" name="_token" value="UfjWrZxriG3ddI5q4I0yedNx41wgAuW0tWA61BqK" autocomplete="off">                            <button type="submit" aria-label="Hapus item">&times;</button>
+                        </form>
+                    </article>
+                                    <article class="cart-item">
+                        <form method="POST" action="http://127.0.0.1:8000/keranjang/a3e0e95f-1587-4204-9fc5-0af0abc3f0aa/pilih" class="cart-item__pilih">
+                            <input type="hidden" name="_token" value="UfjWrZxriG3ddI5q4I0yedNx41wgAuW0tWA61BqK" autocomplete="off">                            <input type="checkbox" checked onchange="this.form.submit()"
+                                   aria-label="Pilih Kemeja Oxford Katun Pria untuk checkout">
+                        </form>
+
+                        <img class="cart-item__img" src="http://127.0.0.1:8000/images/figma/katalog/prod-kemeja-oxford.png" alt="Kemeja Oxford Katun Pria">
+
+                        <div class="cart-item__info">
+                            <a href="http://127.0.0.1:8000/produk/11b292bb-89cc-4216-a789-34a53d27e494" class="cart-item__name">Kemeja Oxford Katun Pria</a>
+                            <p class="cart-item__variant">Warna: Putih &middot; Ukuran: M</p>
+                            <p class="cart-item__price">Rp 249.000</p>
+                        </div>
+
+                        <form method="POST" action="http://127.0.0.1:8000/keranjang/a3e0e95f-1587-4204-9fc5-0af0abc3f0aa/update" class="cart-item__qty">
+                            <input type="hidden" name="_token" value="UfjWrZxriG3ddI5q4I0yedNx41wgAuW0tWA61BqK" autocomplete="off">                            <button type="submit" name="jumlah" value="0" disabled aria-label="Kurangi jumlah">&minus;</button>
+                            <span>1</span>
+                            <button type="submit" name="jumlah" value="2" aria-label="Tambah jumlah">+</button>
+                        </form>
+
+                        <p class="cart-item__subtotal">Rp 249.000</p>
+
+                        <form method="POST" action="http://127.0.0.1:8000/keranjang/a3e0e95f-1587-4204-9fc5-0af0abc3f0aa/hapus" class="cart-item__hapus">
+                            <input type="hidden" name="_token" value="UfjWrZxriG3ddI5q4I0yedNx41wgAuW0tWA61BqK" autocomplete="off">                            <button type="submit" aria-label="Hapus item">&times;</button>
+                        </form>
+                    </article>
+                                    <article class="cart-item">
+                        <form method="POST" action="http://127.0.0.1:8000/keranjang/cb238273-0626-4491-9bb7-70e6486f26b3/pilih" class="cart-item__pilih">
+                            <input type="hidden" name="_token" value="UfjWrZxriG3ddI5q4I0yedNx41wgAuW0tWA61BqK" autocomplete="off">                            <input type="checkbox"  onchange="this.form.submit()"
+                                   aria-label="Pilih Tas Kulit Selempang Minimalis untuk checkout">
+                        </form>
+
+                        <img class="cart-item__img" src="http://127.0.0.1:8000/images/figma/katalog/prod-tas-kulit.png" alt="Tas Kulit Selempang Minimalis">
+
+                        <div class="cart-item__info">
+                            <a href="http://127.0.0.1:8000/produk/fdf05919-eb40-4d6e-a2f7-941cb386046b" class="cart-item__name">Tas Kulit Selempang Minimalis</a>
+                            <p class="cart-item__variant">Warna: Cokelat &middot; Ukuran: One Size</p>
+                            <p class="cart-item__price">Rp 349.000</p>
+                        </div>
+
+                        <form method="POST" action="http://127.0.0.1:8000/keranjang/cb238273-0626-4491-9bb7-70e6486f26b3/update" class="cart-item__qty">
+                            <input type="hidden" name="_token" value="UfjWrZxriG3ddI5q4I0yedNx41wgAuW0tWA61BqK" autocomplete="off">                            <button type="submit" name="jumlah" value="0" disabled aria-label="Kurangi jumlah">&minus;</button>
+                            <span>1</span>
+                            <button type="submit" name="jumlah" value="2" aria-label="Tambah jumlah">+</button>
+                        </form>
+
+                        <p class="cart-item__subtotal">Rp 349.000</p>
+
+                        <form method="POST" action="http://127.0.0.1:8000/keranjang/cb238273-0626-4491-9bb7-70e6486f26b3/hapus" class="cart-item__hapus">
+                            <input type="hidden" name="_token" value="UfjWrZxriG3ddI5q4I0yedNx41wgAuW0tWA61BqK" autocomplete="off">                            <button type="submit" aria-label="Hapus item">&times;</button>
+                        </form>
+                    </article>
+                            </div>
+
+            <aside class="cart__summary">
+                <h2>Ringkasan</h2>
+                <div class="cart__summary-row">
+                    <span>Item dipilih</span>
+                    <span>2</span>
+                </div>
+                <div class="cart__summary-row cart__summary-row--total">
+                    <span>Total</span>
+                    <span>Rp 568.000</span>
+                </div>
+                <button type="button" class="cart__checkout" disabled>Checkout</button>
+                <p class="cart__hint">Checkout tersedia pada tahap berikutnya (F-06).</p>
+            </aside>
+        </div>
+    </div>
+    </main>
+
+    <footer class="site-footer">
+    <div class="site-footer__inner">
+        <div class="site-footer__brand">
+            <span class="site-footer__wordmark">Gavin Fashion<br>Store</span>
+            <p class="site-footer__tagline">Temukan gaya terbaikmu, pakaian pilihan untuk gaya sehari-hari.</p>
+            <p class="site-footer__note">
+                Kurasi busana kontemporer esensial<br>
+                dengan sentuhan eksklusif dan material<br>
+                premium untuk kepuasan berbusana<br>
+                modern.
+            </p>
+        </div>
+
+        <div class="site-footer__col">
+            <h4>Belanja &amp; Kategori</h4>
+            <ul>
+                                    <li><a href="http://127.0.0.1:8000">Beranda</a></li>
+                                    <li><a href="#">Katalog</a></li>
+                                    <li><a href="#">Pesanan Saya</a></li>
+                                    <li><a href="#">Atasan</a></li>
+                                    <li><a href="#">Bawahan</a></li>
+                                    <li><a href="#">Outer</a></li>
+                                    <li><a href="#">Dress</a></li>
+                                    <li><a href="#">Aksesoris</a></li>
+                                    <li><a href="#">Hijab</a></li>
+                                    <li><a href="#">Sepatu</a></li>
+                            </ul>
+        </div>
+
+        <div class="site-footer__col">
+            <h4>Informasi Pesanan</h4>
+            <ul>
+                                    <li>Pembayaran Via Transfer 1x24 jam</li>
+                                    <li>Tidak Melayani COD</li>
+                                    <li>Pengiriman JNE, J&amp;T, GoSend, GoShop</li>
+                            </ul>
+        </div>
+
+        <div class="site-footer__col">
+            <h4>Hubungi kami:</h4>
+            <p class="site-footer__help">untuk konfirmasi pembayaran dan pertanyaan pesanan</p>
+            <p class="site-footer__phone">089123-1234-1234-1234</p>
+        </div>
+
+        <p class="site-footer__copy">&copy; 2026 Gavin Fashion Store. Hak Cipta Dilindungi.</p>
+    </div>
+</footer>
+
+    <script src="http://127.0.0.1:8000/js/app.js"></script>
+</body>
+</html>
