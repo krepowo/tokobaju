@@ -36,5 +36,7 @@ class DatabaseSeeder extends Seeder
                 'role' => User::ROLE_PELANGGAN,
             ]
         );
+
+        $this->call(DemoSeeder::class);
     }
 }
