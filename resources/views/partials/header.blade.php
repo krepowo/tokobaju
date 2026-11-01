@@ -14,7 +14,7 @@
 
         <nav class="hdr-nav" aria-label="Navigasi utama">
             <a href="{{ route('home') }}" class="{{ $active === 'beranda' ? 'is-active' : '' }}">Beranda</a>
-            <a href="#" class="is-disabled" title="Segera hadir">Katalog</a>
+            <a href="{{ route('katalog') }}" class="{{ $active === 'katalog' ? 'is-active' : '' }}">Katalog</a>
             <a href="#" class="is-disabled" title="Segera hadir">
                 Kategori
                 <img class="hdr-nav__caret" src="{{ asset('images/figma/home/ico-arrow-down.svg') }}" alt="">
@@ -47,7 +47,7 @@
     </div>
     <nav class="hdr-navmob" aria-label="Navigasi utama (seluler)">
         <a href="{{ route('home') }}" class="{{ $active === 'beranda' ? 'is-active' : '' }}">Beranda</a>
-        <a href="#" class="is-disabled">Katalog</a>
+        <a href="{{ route('katalog') }}" class="{{ $active === 'katalog' ? 'is-active' : '' }}">Katalog</a>
         <a href="#" class="is-disabled">Kategori</a>
         <a href="#" class="is-disabled">Pesanan Saya</a>
     </nav>

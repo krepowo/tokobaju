@@ -1,62 +1,155 @@
-mysql db: https://cdn.krepowo.my.id/files/tokobajuonline.sql
+# Toko Baju Online — Gavin Fashion Store
 
+Aplikasi web toko baju online untuk **Kelompok 1**. Dibangun dengan **Laravel 12** dan
+**MySQL** (via Laragon), tampilan memakai Blade + CSS statis (tanpa build Vite).
 
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## Stack
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+| Komponen | Teknologi |
+|---|---|
+| Framework | Laravel 12 (PHP 8.2+) |
+| Database | MySQL 8 |
+| Tampilan | Blade + CSS statis di `public/css/` |
+| Lingkungan dev | Laragon (Nginx/Apache + MySQL) |
 
-## About Laravel
+## Prasyarat
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+1. **Laragon Full** (versi terbaru) — sudah membundel PHP 8.2, MySQL 8, dan Composer.
+   Unduh di <https://laragon.org/download>.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+   - Pastikan PHP aktif **8.2** (Menu Laragon → PHP → Version).
+   - Pastikan web server **Nginx** atau **Apache** aktif (Menu Laragon → Preferences).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+2. **Git** (untuk clone dan kontribusi).
 
-## Learning Laravel
+## Cara Setup dengan Laragon
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 1. Clone repository
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+git clone https://github.com/krepowo/tokobaju.git tokobajuonline
+cd tokobajuonline
+```
 
-## Laravel Sponsors
+### 2. Aktifkan domain `.test`
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Letakkan folder project di dalam document root Laragon (biasanya `C:\laragon\www`):
 
-### Premium Partners
+```text
+C:\laragon\www\tokobajuonline
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Laragon otomatis membuat host `http://tokobajuonline.test` (fitur *Pretty URL*).
+Jika folder ditaruh di luar `www`, tambahkan host manual via menu Laragon →
+**Nginx** (atau Apache) → **Sites Enabled** → **Add**.
 
-## Contributing
+> ⚠️ **Penting**: domain harus mengarah ke subfolder `public/`, bukan ke root project.
+> Jika `http://tokobajuonline.test` menampilkan daftar file *"Index of /"*, berarti
+> document root-nya masih menunjuk ke folder project. Lihat perbaikan di bawah.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3. Salin konfigurasi environment
 
-## Code of Conduct
+```bash
+cp .env.example .env
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Buka `.env`, sesuaikan jika perlu. Default-nya sudah untuk Laragon:
 
-## Security Vulnerabilities
+```dotenv
+APP_URL=http://tokobajuonline.test
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=tokobajuonline
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 4. Buat database
 
-## License
+Lewat Menu Laragon → **Database** (HeidiSQL), atau jalankan di Terminal Laragon:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```sql
+CREATE DATABASE tokobajuonline CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+### 5. Install dependency
+
+```bash
+composer install
+```
+
+### 6. Generate application key
+
+```bash
+php artisan key:generate
+```
+
+### 7. Migrasi dan seed data contoh
+
+```bash
+php artisan migrate:fresh --seed
+```
+
+Sekali jalan, ini membuat seluruh tabel (produk, kategori, pesanan, jasa pengiriman,
+tarif, dll) dan mengisi data dummy: **8 produk, 36 varian, 2 jasa pengiriman,
+12 tarif, 38 provinsi, 7 kategori**, plus 2 akun demo.
+
+### 8. Jalankan
+
+Buka:
+
+```text
+http://tokobajuonline.test
+```
+
+## Akun Demo
+
+| Role | Email | Kata sandi |
+|---|---|---|
+| Pelanggan | `annisa.ayu@gmail.com` | `password` |
+| Penjual (admin) | `admin@gavin.test` | `password` |
+
+## Catatan Penting
+
+- **Tanpa build frontend.** CSS/JS adalah file statis di `public/`, jadi **tidak perlu**
+  `npm install` atau `npm run build`.
+- Struktur database seluruhnya ada di **migrations + seeders** (`database/migrations/`,
+  `database/seeders/`) — `migrate:fresh --seed` sudah cukup untuk menyiapkan data.
+
+## Perbaikan "Index of /" (document root salah)
+
+**Nginx** — Menu Laragon → Nginx → Sites Enabled → `auto.tokobajuonline.test.conf`, ubah baris `root`:
+
+```nginx
+root "C:/laragon/www/tokobajuonline/public";
+```
+
+Lalu reload Nginx (Menu Laragon → Nginx → Reload). Supaya perubahan tidak ditimpa Laragon,
+ganti nama file dari `auto....conf` menjadi `tokobajuonline.test.conf` (buang prefix `auto.`).
+
+**Apache** — ubah `DocumentRoot` menjadi subfolder `public`:
+
+```apache
+DocumentRoot "C:/laragon/www/tokobajuonline/public"
+<Directory "C:/laragon/www/tokobajuonline/public">
+    Options Indexes FollowSymLinks
+    AllowOverride All
+    Require all granted
+</Directory>
+```
+
+## Alternatif Tanpa Host `.test`
+
+Jika tidak ingin mengatur domain, jalankan server bawaan Laravel:
+
+```bash
+php artisan serve
+```
+
+Lalu buka `http://127.0.0.1:8000`.
+
+## Kontribusi
+
+Lihat [CONTRIBUTING.md](CONTRIBUTING.md) untuk alur kerja Git kelompok (branch, commit,
+dan Pull Request).

@@ -2,68 +2,71 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kategori;
+use App\Models\Produk;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Collection;
 
 class HomeController extends Controller
 {
     /**
      * Beranda pelanggan.
      *
-     * Data kategori dan produk masih berupa larik statis karena tabel katalog
-     * belum dibuat. Bentuk data sengaja dibuat sama dengan yang nanti dipakai
-     * model Kategori / Produk supaya view tidak perlu diubah saat fitur
-     * katalog (F-03, F-04) sudah tersedia.
+     * Kategori dan produk dibaca dari database. Rating/ulasan dihitung dari
+     * tabel ulasan (masih kosong sampai fitur F-11 memberi ulasan dikerjakan).
      */
     public function index(): View
     {
-        $categories = [
-            ['label' => 'Atasan', 'image' => 'cat-atasan.jpg'],
-            ['label' => 'Bawahan', 'image' => 'cat-bawahan.jpg'],
-            ['label' => 'Outer', 'image' => 'cat-outer.jpg'],
-            ['label' => 'Dress', 'image' => 'cat-dress.jpg'],
-            ['label' => 'Aksesori', 'image' => 'cat-aksesori.jpg'],
-            ['label' => 'Hijab', 'image' => 'cat-hijab.jpg'],
-            ['label' => 'Sepatu', 'image' => 'cat-sepatu.jpg'],
-        ];
+        $categories = $this->presentedCategories();
 
-        $products = [
-            [
-                'name' => 'Kaos Crewneck Katun Pria',
-                'category' => 'Atasan',
-                'rating' => '4,8',
-                'reviews' => 24,
-                'price' => 159000,
-                'image' => 'prod-kaos.jpg',
-            ],
-            [
-                'name' => 'Celana Chino Slim Fit',
-                'category' => 'Bawahan',
-                'rating' => '4,9',
-                'reviews' => 38,
-                'price' => 219000,
-                'image' => 'prod-chino.jpg',
-            ],
-            [
-                'name' => 'Cardigan Knit Premium',
-                'category' => 'Outer',
-                'rating' => '4,7',
-                'reviews' => 19,
-                'price' => 249000,
-                'image' => 'prod-cardigan.jpg',
-            ],
-            [
-                'name' => 'Casual Midi Dress Linen',
-                'category' => 'Dress',
-                'rating' => '4,8',
-                'reviews' => 24,
-                'price' => 289000,
-                'image' => 'prod-dress.jpg',
-            ],
-        ];
+        $products = Produk::query()
+            ->with('kategori')
+            ->withCount('ulasan')
+            ->withAvg('ulasan', 'rating')
+            ->latest()
+            ->take(4)
+            ->get()
+            ->map(fn (Produk $p) => [
+                'name' => $p->nama_produk,
+                'category' => $p->kategori?->nama_kategori,
+                'rating' => $p->ulasan_count > 0
+                    ? number_format((float) $p->ulasan_avg_rating, 1, ',', '')
+                    : null,
+                'reviews' => $p->ulasan_count,
+                'price' => (int) $p->harga,
+                'image' => $p->gambar,
+            ]);
 
         return view('home', [
             'categories' => $categories,
             'products' => $products,
         ]);
+    }
+
+    /**
+     * Kategori beranda mengikuti urutan tampilan desain (frame 25:769).
+     * Tabel kategori hanya menyimpan nama, jadi urutan + ikon dipegang di sini.
+     */
+    private function presentedCategories(): Collection
+    {
+        $images = [
+            'Atasan' => 'cat-atasan.jpg',
+            'Bawahan' => 'cat-bawahan.jpg',
+            'Outer' => 'cat-outer.jpg',
+            'Dress' => 'cat-dress.jpg',
+            'Aksesori' => 'cat-aksesori.jpg',
+            'Hijab' => 'cat-hijab.jpg',
+            'Sepatu' => 'cat-sepatu.jpg',
+        ];
+
+        $order = array_flip(array_keys($images));
+
+        return Kategori::all()
+            ->sortBy(fn (Kategori $k) => $order[$k->nama_kategori] ?? PHP_INT_MAX)
+            ->values()
+            ->map(fn (Kategori $k) => [
+                'label' => $k->nama_kategori,
+                'image' => $images[$k->nama_kategori] ?? 'cat-atasan.jpg',
+            ]);
     }
 }

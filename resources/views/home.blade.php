@@ -57,7 +57,7 @@
     <section class="products wrap">
         <div class="products__head">
             <h2 class="products__title">Produk Unggulan</h2>
-            <a href="#" class="products__link">
+            <a href="{{ route('katalog') }}" class="products__link">
                 Lihat semua
                 <img src="{{ asset('images/figma/home/ico-arrow-right.svg') }}" alt="">
             </a>
@@ -67,14 +67,18 @@
             @foreach ($products as $product)
                 <a href="#" class="pcard">
                     <span class="pcard__media">
-                        <img src="{{ asset('images/figma/home/' . $product['image']) }}" alt="{{ $product['name'] }}">
+                        <img src="{{ asset($product['image']) }}" alt="{{ $product['name'] }}">
                     </span>
                     <span class="pcard__cat">{{ $product['category'] }}</span>
                     <span class="pcard__name">{{ $product['name'] }}</span>
                     <span class="pcard__rating">
-                        <img src="{{ asset('images/figma/home/ico-star-1.svg') }}" alt="">
-                        <b>{{ $product['rating'] }}</b>
-                        <span>({{ $product['reviews'] }})</span>
+                        @if ($product['reviews'] > 0)
+                            <img src="{{ asset('images/figma/home/ico-star-1.svg') }}" alt="">
+                            <b>{{ $product['rating'] }}</b>
+                            <span>({{ $product['reviews'] }})</span>
+                        @else
+                            <span>Baru</span>
+                        @endif
                     </span>
                     <span class="pcard__price">Rp {{ number_format($product['price'], 0, ',', '.') }}</span>
                 </a>
