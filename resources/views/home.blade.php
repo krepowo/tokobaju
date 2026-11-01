@@ -2,42 +2,83 @@
 
 @section('title', 'Beranda')
 @section('active', 'beranda')
+@section('main_class', 'site-main--flush')
 
 @section('content')
-    <section class="panel">
-        <div class="panel__head">
-            @auth
-                <h1>Halo, {{ auth()->user()->name }}</h1>
-                <p class="muted">
-                    Anda masuk sebagai
-                    <strong>{{ auth()->user()->isPenjual() ? 'Penjual' : 'Pelanggan' }}</strong>
-                    dengan akun {{ auth()->user()->identity }}.
-                </p>
-            @else
-                <h1>Selamat datang di Gavin Fashion Store Indonesia</h1>
-                <p class="muted">Masuk atau daftar untuk mulai berbelanja pakaian pilihan.</p>
-            @endauth
+    <section class="hero">
+        <div class="hero__bg">
+            <img src="{{ asset('images/figma/home/hero-bg.jpg') }}" alt="Koleksi Gavin Fashion Store">
+        </div>
+        <div class="hero__veil" aria-hidden="true"></div>
+        <span class="hero__glow" aria-hidden="true"></span>
+
+        <div class="hero__content">
+            <span class="hero__badge">
+                <i aria-hidden="true"></i>
+                <span>Edisi Spesial 2025 &bull; Koleksi Terbaru</span>
+            </span>
+
+            <h1>Tampil Percaya Diri dengan<br>Sentuhan Elegan Modern</h1>
+
+            <p class="hero__sub">
+                Eksplorasi pakaian esensial dan potongan kontemporer Gavin Fashion Store.
+                Dibuat dengan material premium untuk kenyamanan gaya sehari-hari.
+            </p>
+
+            <div class="hero__cta-row">
+                <a href="#" class="hero__cta">
+                    Belanja Sekarang
+                    <img src="{{ asset('images/figma/home/ico-chevron-white.svg') }}" alt="">
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="cats wrap">
+        <div class="cats__head">
+            <div>
+                <h2 class="cats__title">Kategori Pilihan</h2>
+                <p class="cats__sub">Temukan gaya yang tepat untuk setiap momen Anda</p>
+            </div>
         </div>
 
-        <div class="row">
-            @auth
-                @if (auth()->user()->isPenjual())
-                    <a href="{{ route('admin.home') }}" class="btn">Buka Halaman Penjual</a>
-                @endif
+        <div class="cats__row">
+            @foreach ($categories as $category)
+                <a href="#" class="cat-chip">
+                    <span class="cat-chip__circle">
+                        <img src="{{ asset('images/figma/home/' . $category['image']) }}" alt="{{ $category['label'] }}">
+                    </span>
+                    <span class="cat-chip__label">{{ $category['label'] }}</span>
+                </a>
+            @endforeach
+        </div>
+    </section>
 
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="btn btn--ghost">Keluar</button>
-                </form>
-            @else
-                <a href="{{ route('login') }}" class="btn">Masuk</a>
-                <a href="{{ route('register') }}" class="btn btn--ghost">Daftar</a>
-            @endauth
+    <section class="products wrap">
+        <div class="products__head">
+            <h2 class="products__title">Produk Unggulan</h2>
+            <a href="#" class="products__link">
+                Lihat semua
+                <img src="{{ asset('images/figma/home/ico-arrow-right.svg') }}" alt="">
+            </a>
         </div>
 
-        <div class="alert alert--info">
-            Tahap saat ini: sistem login dan registrasi. Halaman katalog, keranjang, pesanan, dan penjual
-            akan dibangun pada tahap berikutnya.
+        <div class="products__grid">
+            @foreach ($products as $product)
+                <a href="#" class="pcard">
+                    <span class="pcard__media">
+                        <img src="{{ asset('images/figma/home/' . $product['image']) }}" alt="{{ $product['name'] }}">
+                    </span>
+                    <span class="pcard__cat">{{ $product['category'] }}</span>
+                    <span class="pcard__name">{{ $product['name'] }}</span>
+                    <span class="pcard__rating">
+                        <img src="{{ asset('images/figma/home/ico-star-1.svg') }}" alt="">
+                        <b>{{ $product['rating'] }}</b>
+                        <span>({{ $product['reviews'] }})</span>
+                    </span>
+                    <span class="pcard__price">Rp {{ number_format($product['price'], 0, ',', '.') }}</span>
+                </a>
+            @endforeach
         </div>
     </section>
 @endsection
