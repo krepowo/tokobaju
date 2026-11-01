@@ -59,8 +59,7 @@
                     <span>Total</span>
                     <span>Rp {{ number_format($total, 0, ',', '.') }}</span>
                 </div>
-                <button type="button" class="cart__checkout" disabled>Checkout</button>
-                <p class="cart__hint">Checkout tersedia pada tahap berikutnya (F-06).</p>
+                <a href="{{ route('checkout.index') }}" class="cart__checkout">Checkout</a>
             </aside>
         </div>
     @endif

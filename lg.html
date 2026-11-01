@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Masuk &middot; Gavin Fashion Store</title>
+    <link rel="stylesheet" href="http://127.0.0.1:8000/css/app.css">
+</head>
+<body class="auth-body">
+    <div class="auth">
+        
+        <aside class="auth__visual">
+            <div class="auth__photo" role="img" aria-label="Interior Gavin Fashion Store"></div>
+            <div class="auth__veil" aria-hidden="true"></div>
+            <div class="auth__stage">
+                <img class="auth__logo" src="http://127.0.0.1:8000/images/figma/logo.png" alt="Gavin Fashion Store">
+                <p class="auth__tagline">Temukan gaya terbaikmu</p>
+                <p class="auth__tagsub">Pakaian pilihan untuk gaya sehari-hari.</p>
+            </div>
+        </aside>
+
+        <main class="auth__panel">
+            <div class="auth__card ">
+                    <header class="auth__head">
+        <h2>Masuk ke Akun</h2>
+        <p>Masuk untuk melanjutkan belanja Anda di Gavin Fashion Store</p>
+    </header>
+
+    
+    
+    <form method="POST" action="http://127.0.0.1:8000/login" class="form" novalidate>
+        <input type="hidden" name="_token" value="TBVYWR5aJBwcrUpgnVYnTYPptcqRnA9xC3RhEsHv" autocomplete="off">
+        <div class="field">
+            <label for="identity">Email atau Nomor Telepon</label>
+            <input type="text" id="identity" name="identity" value=""
+                   placeholder="Masukkan email atau nomor telepon"
+                   autocomplete="username"
+                   class="">
+                    </div>
+
+        <div class="field">
+            <label for="password">Kata Sandi</label>
+            <div class="field__password">
+                <input type="password" id="password" name="password" placeholder="Masukkan kata sandi"
+                       autocomplete="current-password"
+                       class="">
+                <button type="button" class="field__toggle" data-toggle-password="password" aria-label="Tampilkan kata sandi">
+                    <img src="http://127.0.0.1:8000/images/figma/eye.svg" alt="" aria-hidden="true">
+                </button>
+            </div>
+                    </div>
+
+        <button type="submit" class="btn btn--block">Masuk</button>
+    </form>
+
+    <p class="auth__switch">Belum punya akun? <a href="http://127.0.0.1:8000/register">Daftar</a></p>
+            </div>
+        </main>
+    </div>
+
+    <script src="http://127.0.0.1:8000/js/app.js"></script>
+</body>
+</html>

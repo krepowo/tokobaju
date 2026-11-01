@@ -51,13 +51,20 @@ class KeranjangController extends Controller
         ]);
 
         $item->jumlah = min((int) $item->jumlah + $jumlah, (int) $ukuran->stok);
-        $item->dipilih = true;
-        $item->save();
 
         if ($request->input('mode') === 'beli') {
-            return redirect()->route('keranjang.index')
-                ->with('success', 'Produk ditambahkan. Lanjutkan ke checkout (tahap berikutnya).');
+            $item->dipilih = true;
+            $item->save();
+
+            Keranjang::where('id_user', auth()->id())
+                ->where('id_keranjang', '!=', $item->id_keranjang)
+                ->update(['dipilih' => false]);
+
+            return redirect()->route('checkout.index')
+                ->with('success', 'Produk ditambahkan. Lanjutkan ke checkout.');
         }
+
+        $item->save();
 
         return back()->with('success', 'Produk ditambahkan ke keranjang.');
     }

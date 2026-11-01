@@ -3,7 +3,9 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KatalogController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\KeranjangController;
+use App\Http\Controllers\PesananController;
 use App\Http\Controllers\ProdukController;
 use Illuminate\Support\Facades\Route;
 
@@ -33,6 +35,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/keranjang/{keranjang}/update', [KeranjangController::class, 'update'])->name('keranjang.update');
     Route::post('/keranjang/{keranjang}/pilih', [KeranjangController::class, 'togglePilih'])->name('keranjang.togglePilih');
     Route::post('/keranjang/{keranjang}/hapus', [KeranjangController::class, 'destroy'])->name('keranjang.hapus');
+
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::get('/pesanan/{pesanan}', [PesananController::class, 'show'])->name('pesanan.show');
 });
 
 // Halaman penjual (placeholder, dibangun pada tahap berikutnya).
