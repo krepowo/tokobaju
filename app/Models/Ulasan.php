@@ -39,4 +39,9 @@ class Ulasan extends Model
     {
         return $this->belongsTo(User::class, 'id_user', 'id_user');
     }
+
+    public function detail()
+    {
+        return $this->belongsTo(DetailPesanan::class, 'id_detail', 'id_detail');
+    }
 }

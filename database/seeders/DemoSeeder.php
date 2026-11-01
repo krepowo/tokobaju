@@ -49,6 +49,7 @@ class DemoSeeder extends Seeder
         $jasa = $this->seedJasaPengiriman($penjual);
         $this->seedKeranjang($pelanggan, $produk);
         $this->seedPesanan($penjual, $pelanggan, $produk, $jasa);
+        $this->seedUlasan($produk, $jasa[0]['id']);
 
         $this->command?->info('Data demo siap: '.DB::table('produk')->count().' produk, '
             .DB::table('ukuran_stok')->count().' varian, '
@@ -65,8 +66,14 @@ class DemoSeeder extends Seeder
             [
                 'kategori' => 'Dress', 'nama' => 'Casual Midi Dress Linen', 'harga' => 279000,
                 'gambar' => 'images/figma/katalog/prod-midi-dress.png', 'rating' => 4.8,
-                'spesifikasi' => "Ukuran | Lingkar Dada | Panjang\nS | 84 cm | 110 cm\nM | 88 cm | 112 cm\nL | 94 cm | 114 cm\nXL | 98 cm | 116 cm",
-                'varian' => [['warna' => 'Cream', 'ukuran' => ['S', 'M', 'L', 'XL'], 'stok' => 14]],
+                'deskripsi' => "Midi dress berbahan premium linen natural dengan siluet A-line yang anggun dan santai. Dilengkapi kerah V-neck yang feminin, kancing depan aktif, serta aksen ikat pinggang serasi yang memberikan siluet proporsional dan nyaman dikenakan sepanjang hari.\nMaterial: 100% Pure Organic Linen, breathable, sejuk, dan lembut di kulit.\nPotongan & Detail: Kerah V-neck, kancing depan bukaan penuh, saku samping fungsional, dan sabuk kain lepas-pasang.\nInstruksi Perawatan: Cuci dengan putaran lembut pada air dingin, jangan diperas kencang, jemur di tempat teduh, dan setrika dengan suhu sedang.",
+                'spesifikasi' => "Ukuran | Lingkar Dada | Lingkar Pinggang | Panjang Dress\nS | 92 cm | 72 - 76 cm | 114 cm\nM | 96 cm | 76 - 80 cm | 115 cm\nL | 100 cm | 80 - 84 cm | 116 cm\nXL | 106 cm | 86 - 90 cm | 117 cm\nXXL | 112 cm | 92 - 96 cm | 118 cm",
+                'varian' => [
+                    ['warna' => 'Sky Stripe', 'ukuran' => ['S', 'M', 'L', 'XL', 'XXL'], 'stok' => 12, 'habis' => ['XXL']],
+                    ['warna' => 'Choco Stripe', 'ukuran' => ['S', 'M', 'L', 'XL', 'XXL'], 'stok' => 12, 'habis' => ['XXL']],
+                    ['warna' => 'Deep Brown', 'ukuran' => ['S', 'M', 'L', 'XL', 'XXL'], 'stok' => 12, 'habis' => ['XXL']],
+                    ['warna' => 'Butter', 'ukuran' => ['S', 'M', 'L', 'XL', 'XXL'], 'stok' => 12, 'habis' => ['XXL']],
+                ],
             ],
             [
                 'kategori' => 'Atasan', 'nama' => 'Kaos Crewneck Katun Pria', 'harga' => 159000,
@@ -129,7 +136,7 @@ class DemoSeeder extends Seeder
                 'id_kategori' => $kategori[$p['kategori']],
                 'id_penjual' => $penjual->id_user,
                 'nama_produk' => $p['nama'],
-                'deskripsi' => 'Produk '.strtolower($p['nama']).' koleksi Gavin Fashion Store.',
+                'deskripsi' => $p['deskripsi'] ?? 'Produk '.strtolower($p['nama']).' koleksi Gavin Fashion Store.',
                 'gambar' => $p['gambar'],
                 'harga' => $p['harga'],
                 'spesifikasi_ukuran' => $p['spesifikasi'],
@@ -137,18 +144,21 @@ class DemoSeeder extends Seeder
                 'updated_at' => now(),
             ]);
 
+            $seq = 0;
             foreach ($p['varian'] as $v) {
+                $habis = $v['habis'] ?? [];
                 foreach ($v['ukuran'] as $u) {
                     $idUkuran = (string) Str::uuid();
                     $ukuranIds[] = $idUkuran;
+                    $stok = in_array($u, $habis, true) ? 0 : $v['stok'];
                     DB::table('ukuran_stok')->insert([
                         'id_ukuran' => $idUkuran,
                         'id_produk' => $idProduk,
                         'ukuran' => $u,
                         'warna' => $v['warna'],
-                        'stok' => $v['stok'],
-                        'aktif' => $v['stok'] > 0,
-                        'created_at' => now(),
+                        'stok' => $stok,
+                        'aktif' => $stok > 0,
+                        'created_at' => now()->addSeconds($seq++),
                         'updated_at' => now(),
                     ]);
                 }
@@ -284,6 +294,7 @@ class DemoSeeder extends Seeder
                     'harga' => $produk[$nama]['harga'],
                     'jumlah' => $jumlah,
                     'rating' => $produk[$nama]['rating'],
+                    'nama' => $nama,
                 ];
             }
 
@@ -322,7 +333,7 @@ class DemoSeeder extends Seeder
                 ]);
 
                 // Ulasan hanya untuk pesanan selesai dan produk yang punya rating.
-                if ($p['status'] === 'selesai' && $it['rating'] !== null) {
+                if ($p['status'] === 'selesai' && $it['rating'] !== null && $it['nama'] !== 'Casual Midi Dress Linen') {
                     DB::table('ulasan')->insert([
                         'id_ulasan' => (string) Str::uuid(),
                         'id_user' => $pelanggan->id_user,
@@ -383,6 +394,128 @@ class DemoSeeder extends Seeder
                     'updated_at' => $tanggal,
                 ]);
             }
+        }
+    }
+
+
+    /**
+     * Ulasan untuk Casual Midi Dress Linen (produk sorotan halaman detail F-04):
+     * ringkasan "4,8 · 24 ulasan" (20×5 + 4×4 bintang) dan tiga ulasan teratas dengan
+     * nama, ukuran, tanggal, dan teks sesuai desain Figma.
+     */
+    private function seedUlasan(array $produk, string $idJasa): void
+    {
+        $dressId = $produk['Casual Midi Dress Linen']['id'];
+
+        $featured = [
+            ['Aditya Wardhana', 'M', '2026-02-12 09:30:00',
+             'Kualitas bahannya sangat bagus dan halus di kulit. Potongan linennya jatuh dengan rapi dan tidak panas dipakai seharian di kantor. Pengiriman cepat dan packaging sangat eksklusif.'],
+            ['Clara Novita', 'S', '2026-01-28 10:15:00',
+             'Sesuai dengan foto dan deskripsi! Warnanya broken white bersih, kancing terpasang kuat dan jahitannya rapi. Cocok dipadukan dengan celana bahan atau rok. Pasti repeat order di Gavin.'],
+            ['Bambang Setiawan', 'L', '2026-01-15 11:00:00',
+             'Bahan linennya bagus dan sejuk. Saran saya pilih satu size di atas jika ingin kesan sedikit lebih loose/oversized. Secara keseluruhan sangat puas dengan kualitasnya.'],
+        ];
+
+        $names = ['Aditya Wardhana', 'Clara Novita', 'Bambang Setiawan',
+                  'Rizky Pratama', 'Sinta Dewi', 'Rahmat Hidayat',
+                  'Larasati Putri', 'Bagus Saputra', 'Dewi Lestari'];
+
+        $userIds = [];
+        foreach ($names as $i => $nama) {
+            $user = User::firstOrCreate(
+                ['email' => Str::slug($nama, '.').'@gavin.test'],
+                [
+                    'nama' => $nama,
+                    'no_telepon' => '0812'.str_pad((string) (34560000 + $i), 8, '0', STR_PAD_LEFT),
+                    'password' => bcrypt('password'),
+                    'role' => User::ROLE_PELANGGAN,
+                ],
+            );
+            $userIds[] = $user->id_user;
+        }
+
+        $fillerComments = [
+            'Barang sesuai deskripsi, bahan nyaman dipakai.',
+            'Pengiriman cepat, packing rapi. Recommended!',
+            'Warna dan jahitan bagus, worth it.',
+            'Size pas, kualitas linennya adem.',
+            'Repeat order, pelayanan memuaskan.',
+        ];
+        $fillerSizes = ['S', 'M', 'L', 'XL'];
+
+        // 3 ulasan featured (5 bintang).
+        $reviews = [];
+        foreach ($featured as $i => $f) {
+            $reviews[] = [
+                'user' => $userIds[$i],
+                'ukuran' => $f[1],
+                'rating' => 5,
+                'tanggal' => $f[2],
+                'komentar' => $f[3],
+            ];
+        }
+
+        // 21 ulasan filler: 17×5 bintang lalu 4×4 bintang, tanggal mundur (Des 2025).
+        for ($i = 0; $i < 21; $i++) {
+            $reviews[] = [
+                'user' => $userIds[3 + ($i % 6)],
+                'ukuran' => $fillerSizes[$i % 4],
+                'rating' => $i < 17 ? 5 : 4,
+                'tanggal' => sprintf('2025-12-%02d 09:00:00', 1 + $i),
+                'komentar' => $fillerComments[$i % 5],
+            ];
+        }
+
+        foreach ($reviews as $r) {
+            $idUkuran = DB::table('ukuran_stok')
+                    ->where('id_produk', $dressId)
+                    ->where('ukuran', $r['ukuran'])
+                    ->where('aktif', 1)
+                    ->value('id_ukuran')
+                ?: DB::table('ukuran_stok')
+                    ->where('id_produk', $dressId)
+                    ->where('ukuran', $r['ukuran'])
+                    ->value('id_ukuran');
+
+            $idPesanan = (string) Str::uuid();
+            DB::table('pesanan')->insert([
+                'id_pesanan' => $idPesanan,
+                'id_user' => $r['user'],
+                'id_jasa' => $idJasa,
+                'tanggal_pesanan' => $r['tanggal'],
+                'alamat_tujuan' => 'Jl. Demo No. 1, Kec. Coblong, Kota Bandung, Jawa Barat 40132',
+                'pulau_tujuan' => 'Jawa',
+                'ongkir' => 9000,
+                'total' => 279000 + 9000,
+                'status' => 'selesai',
+                'batas_bayar' => null,
+                'created_at' => $r['tanggal'],
+                'updated_at' => $r['tanggal'],
+            ]);
+
+            $idDetail = (string) Str::uuid();
+            DB::table('detail_pesanan')->insert([
+                'id_detail' => $idDetail,
+                'id_pesanan' => $idPesanan,
+                'id_ukuran' => $idUkuran,
+                'jumlah' => 1,
+                'harga_satuan' => 279000,
+                'subtotal' => 279000,
+                'created_at' => $r['tanggal'],
+                'updated_at' => $r['tanggal'],
+            ]);
+
+            DB::table('ulasan')->insert([
+                'id_ulasan' => (string) Str::uuid(),
+                'id_user' => $r['user'],
+                'id_produk' => $dressId,
+                'id_detail' => $idDetail,
+                'rating' => $r['rating'],
+                'komentar' => $r['komentar'],
+                'tanggal' => $r['tanggal'],
+                'created_at' => $r['tanggal'],
+                'updated_at' => $r['tanggal'],
+            ]);
         }
     }
 }
