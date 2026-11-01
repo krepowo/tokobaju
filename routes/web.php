@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
     Route::get('/pesanan/{pesanan}', [PesananController::class, 'show'])->name('pesanan.show');
+    Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan.index');
 });
 
 // Halaman penjual (placeholder, dibangun pada tahap berikutnya).

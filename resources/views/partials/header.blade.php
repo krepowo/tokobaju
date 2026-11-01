@@ -1,6 +1,7 @@
 @php
     $active = $active ?? '';
-    $firstName = auth()->check() ? \Illuminate\Support\Str::of(auth()->user()->nama)->before(' ') : null;
+    $nama = auth()->check() ? auth()->user()->nama : null;
+    $kategoriNav = \App\Models\Kategori::orderBy('nama_kategori')->get();
 @endphp
 
 <header class="site-header">
@@ -15,11 +16,20 @@
         <nav class="hdr-nav" aria-label="Navigasi utama">
             <a href="{{ route('home') }}" class="{{ $active === 'beranda' ? 'is-active' : '' }}">Beranda</a>
             <a href="{{ route('katalog') }}" class="{{ $active === 'katalog' ? 'is-active' : '' }}">Katalog</a>
-            <a href="#" class="is-disabled" title="Segera hadir">
-                Kategori
-                <img class="hdr-nav__caret" src="{{ asset('images/figma/home/ico-arrow-down.svg') }}" alt="">
-            </a>
-            <a href="#" class="is-disabled" title="Segera hadir">Pesanan Saya</a>
+
+            <span class="hdr-dropdown">
+                <button type="button" class="hdr-dropdown__btn" aria-haspopup="true">
+                    Kategori
+                    <img class="hdr-nav__caret" src="{{ asset('images/figma/home/ico-arrow-down.svg') }}" alt="">
+                </button>
+                <span class="hdr-dropdown__menu">
+                    @foreach ($kategoriNav as $k)
+                        <a href="{{ route('katalog') }}?kategori%5B%5D={{ $k->id_kategori }}">{{ $k->nama_kategori }}</a>
+                    @endforeach
+                </span>
+            </span>
+
+            <a href="{{ route('pesanan.index') }}" class="{{ $active === 'pesanan' ? 'is-active' : '' }}">Pesanan Saya</a>
         </nav>
 
         <div class="hdr-actions">
@@ -37,14 +47,9 @@
                     </a>
                 @endif
             @endauth
-            <button type="button" class="hdr-icon" aria-label="Cari produk">
-                <img src="{{ asset('images/figma/home/ico-search.svg') }}" alt="">
-            </button>
 
             @auth
-                <a href="{{ auth()->user()->isPenjual() ? route('admin.home') : route('home') }}" class="hdr-cta">
-                    Halo, {{ $firstName }}
-                </a>
+                <a href="{{ auth()->user()->isPenjual() ? route('admin.home') : route('home') }}" class="hdr-cta">{{ $nama }}</a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="hdr-avatar" title="Keluar" aria-label="Keluar">
@@ -59,10 +64,11 @@
             @endauth
         </div>
     </div>
+
     <nav class="hdr-navmob" aria-label="Navigasi utama (seluler)">
         <a href="{{ route('home') }}" class="{{ $active === 'beranda' ? 'is-active' : '' }}">Beranda</a>
         <a href="{{ route('katalog') }}" class="{{ $active === 'katalog' ? 'is-active' : '' }}">Katalog</a>
-        <a href="#" class="is-disabled">Kategori</a>
-        <a href="#" class="is-disabled">Pesanan Saya</a>
+        <a href="{{ route('katalog') }}">Kategori</a>
+        <a href="{{ route('pesanan.index') }}" class="{{ $active === 'pesanan' ? 'is-active' : '' }}">Pesanan Saya</a>
     </nav>
 </header>
