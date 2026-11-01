@@ -45,12 +45,7 @@
             @enderror
         </div>
 
-        <label class="checkline">
-            <input type="checkbox" name="remember" value="1" @checked(old('remember'))>
-            <span>Ingat saya di perangkat ini</span>
-        </label>
-
-        <button type="submit" class="btn btn--block btn--lg">Masuk</button>
+        <button type="submit" class="btn btn--auth-submit">Masuk</button>
     </form>
 
     <p class="auth__switch">Belum punya akun? <a href="{{ route('register') }}">Daftar</a></p>

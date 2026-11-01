@@ -12,11 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->uuid('id_user')->primary();
+            $table->string('nama', 100);
+            $table->string('email', 100)->nullable()->unique();
+            $table->string('no_telepon', 20)->nullable()->unique();
+            $table->string('password', 255);
+            $table->enum('role', ['pelanggan', 'penjual'])->default('pelanggan');
+            $table->string('provinsi', 100)->nullable();
+            $table->string('kota_kabupaten', 100)->nullable();
+            $table->string('kecamatan', 100)->nullable();
+            $table->string('kelurahan_desa', 100)->nullable();
+            $table->string('kode_pos', 10)->nullable();
+            $table->text('detail_alamat')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
@@ -29,7 +36,7 @@ return new class extends Migration
 
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
-            $table->foreignId('user_id')->nullable()->index();
+            $table->string('user_id', 36)->nullable()->index();
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();
             $table->longText('payload');
@@ -42,8 +49,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('users');
     }
 };

@@ -8,22 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('phone', 20)->nullable()->unique()->after('email');
-            $table->string('role', 20)->default('pelanggan')->after('phone');
-        });
-
-        // Login boleh memakai email atau nomor telepon, jadi email tidak wajib.
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('email')->nullable()->change();
-        });
+        // no-op: kolom no_telepon dan role sudah didefinisikan langsung pada create_users_table
     }
 
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropUnique(['phone']);
-            $table->dropColumn(['phone', 'role']);
-        });
     }
 };

@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -11,7 +12,11 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, HasUuids, Notifiable;
+
+    protected $primaryKey = 'id_user';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     public const ROLE_PELANGGAN = 'pelanggan';
     public const ROLE_PENJUAL = 'penjual';
@@ -22,11 +27,19 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'nama',
         'name',
         'email',
+        'no_telepon',
         'phone',
         'password',
         'role',
+        'provinsi',
+        'kota_kabupaten',
+        'kecamatan',
+        'kelurahan_desa',
+        'kode_pos',
+        'detail_alamat',
     ];
 
     /**
@@ -50,6 +63,32 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // Accessor & Mutator untuk kompatibilitas nama field
+    public function getNameAttribute(): ?string
+    {
+        return $this->attributes['nama'] ?? $this->attributes['name'] ?? null;
+    }
+
+    public function setNameAttribute(?string $value): void
+    {
+        $this->attributes['nama'] = $value;
+    }
+
+    public function getPhoneAttribute(): ?string
+    {
+        return $this->attributes['no_telepon'] ?? $this->attributes['phone'] ?? null;
+    }
+
+    public function setPhoneAttribute(?string $value): void
+    {
+        $this->attributes['no_telepon'] = $value;
+    }
+
+    public function getIdAttribute(): ?string
+    {
+        return $this->attributes['id_user'] ?? null;
     }
 
     public function isPenjual(): bool
@@ -93,11 +132,36 @@ class User extends Authenticatable
             return static::whereRaw('LOWER(email) = ?', [mb_strtolower($identity)])->first();
         }
 
-        return static::where('phone', static::normalizePhone($identity))->first();
+        $normalized = static::normalizePhone($identity);
+
+        return static::where(function ($query) use ($normalized) {
+            $query->where('no_telepon', $normalized)
+                ->orWhere('phone', $normalized);
+        })->first();
     }
 
     public function getIdentityAttribute(): string
     {
-        return $this->email ?: (string) $this->phone;
+        return $this->email ?: (string) ($this->no_telepon ?: $this->phone);
+    }
+
+    public function keranjang(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Keranjang::class, 'id_user', 'id_user');
+    }
+
+    public function pesanan(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Pesanan::class, 'id_user', 'id_user');
+    }
+
+    public function ulasan(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Ulasan::class, 'id_user', 'id_user');
+    }
+
+    public function produkPenjual(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Produk::class, 'id_penjual', 'id_user');
     }
 }

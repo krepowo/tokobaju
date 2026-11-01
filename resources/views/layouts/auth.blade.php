@@ -8,9 +8,16 @@
 </head>
 <body class="auth-body">
     <div class="auth">
-        {{-- Panel kiri: foto saja. Teks menyusul setelah desain Figma final. --}}
-        <aside class="auth__brand" role="img"
-               aria-label="Interior Gavin Fashion Store"></aside>
+        <!-- Panel kiri: Brand visual dengan foto boutique & logo emas resmi Gavin -->
+        <aside class="auth__brand" role="img" aria-label="Interior Gavin Fashion Store">
+            <div class="auth__brand-overlay">
+                <div class="auth__brand-content">
+                    <img src="{{ asset('images/logo-gavin.png') }}" alt="Gavin Fashion Store" class="auth__brand-logo">
+                    <h1 class="auth__brand-title">Temukan gaya terbaikmu</h1>
+                    <p class="auth__brand-subtitle">Pakaian pilihan untuk gaya sehari-hari.</p>
+                </div>
+            </div>
+        </aside>
 
         <main class="auth__panel">
             <div class="auth__card">

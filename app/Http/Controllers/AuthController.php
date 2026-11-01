@@ -59,45 +59,41 @@ class AuthController extends Controller
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'min:3', 'max:100'],
-            'identity' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:20'],
             'password' => ['required', 'string', 'min:8', 'max:72'],
         ], [
             'name.required' => 'Nama lengkap wajib diisi.',
             'name.min' => 'Nama lengkap minimal 3 karakter.',
-            'identity.required' => 'Email atau nomor telepon wajib diisi.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
             'password.required' => 'Kata sandi wajib diisi.',
             'password.min' => 'Kata sandi minimal 8 karakter.',
         ]);
 
-        $identity = trim($data['identity']);
-        $isEmail = str_contains($identity, '@');
-
-        if ($isEmail && ! filter_var($identity, FILTER_VALIDATE_EMAIL)) {
+        $email = mb_strtolower(trim($data['email']));
+        if (User::whereRaw('LOWER(email) = ?', [$email])->exists()) {
             throw ValidationException::withMessages([
-                'identity' => 'Format email tidak valid.',
+                'email' => 'Email ini sudah terdaftar.',
             ]);
         }
 
-        if (! $isEmail) {
-            $phone = User::normalizePhone($identity);
-
-            if ($phone === null || strlen($phone) < 10 || strlen($phone) > 15) {
+        $phone = null;
+        if (! empty($data['phone'])) {
+            $phone = User::normalizePhone($data['phone']);
+            if ($phone && User::where('no_telepon', $phone)->orWhere('phone', $phone)->exists()) {
                 throw ValidationException::withMessages([
-                    'identity' => 'Nomor telepon tidak valid. Contoh: 081234567890.',
+                    'phone' => 'Nomor telepon ini sudah terdaftar.',
                 ]);
             }
         }
 
-        if (User::findByIdentity($identity)) {
-            throw ValidationException::withMessages([
-                'identity' => 'Email atau nomor telepon sudah terdaftar.',
-            ]);
-        }
-
         $user = User::create([
+            'nama' => $data['name'],
             'name' => $data['name'],
-            'email' => $isEmail ? mb_strtolower($identity) : null,
-            'phone' => $isEmail ? null : $phone,
+            'email' => $email,
+            'no_telepon' => $phone,
+            'phone' => $phone,
             'password' => $data['password'],
             'role' => User::ROLE_PELANGGAN,
         ]);
