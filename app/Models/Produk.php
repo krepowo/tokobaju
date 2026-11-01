@@ -35,6 +35,11 @@ class Produk extends Model
         return $this->belongsTo(Kategori::class, 'id_kategori', 'id_kategori');
     }
 
+    public function ukuranStok()
+    {
+        return $this->hasMany(UkuranStok::class, 'id_produk', 'id_produk');
+    }
+
     public function ulasan()
     {
         return $this->hasMany(Ulasan::class, 'id_produk', 'id_produk');

@@ -57,7 +57,7 @@
     <section class="products wrap">
         <div class="products__head">
             <h2 class="products__title">Produk Unggulan</h2>
-            <a href="#" class="products__link">
+            <a href="{{ route('katalog') }}" class="products__link">
                 Lihat semua
                 <img src="{{ asset('images/figma/home/ico-arrow-right.svg') }}" alt="">
             </a>
