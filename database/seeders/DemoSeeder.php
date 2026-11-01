@@ -14,6 +14,10 @@ use Illuminate\Support\Str;
  *
  * Menghapus lalu mengisi ulang: produk, ukuran_stok, jasa_pengiriman,
  * dan tarif_pengiriman. Aman dijalankan pada database kosong (migrate:fresh).
+ *
+ * Urutan daftar sengaja menaruh 4 "produk unggulan" beranda di awal, dan
+ * createdAt dibuat menurun (subMinutes) supaya HomeController via
+ * latest()->take(4) menghasilkan urutan yang sama dengan frame 25:769.
  */
 class DemoSeeder extends Seeder
 {
@@ -60,18 +64,6 @@ class DemoSeeder extends Seeder
                 ],
             ],
             [
-                'kategori' => 'Atasan',
-                'nama' => 'Kemeja Oxford Casual',
-                'deskripsi' => 'Kemeja lengan panjang berbahan oxford, cocok untuk gaya smart casual.',
-                'gambar' => 'images/figma/home/cat-atasan.jpg',
-                'harga' => 189000,
-                'spesifikasi' => "Ukuran | Lebar Dada | Panjang | Panjang Lengan\nM | 54 cm | 70 cm | 60 cm\nL | 57 cm | 72 cm | 61 cm\nXL | 60 cm | 74 cm | 62 cm",
-                'varian' => [
-                    ['warna' => 'Putih', 'ukuran' => ['M', 'L', 'XL'], 'stok' => 18],
-                    ['warna' => 'Biru', 'ukuran' => ['M', 'L', 'XL'], 'stok' => 12],
-                ],
-            ],
-            [
                 'kategori' => 'Bawahan',
                 'nama' => 'Celana Chino Slim Fit',
                 'deskripsi' => 'Celana chino potongan slim fit dengan bahan stretch yang nyaman dipakai.',
@@ -81,6 +73,18 @@ class DemoSeeder extends Seeder
                 'varian' => [
                     ['warna' => 'Navy', 'ukuran' => ['30', '32', '34', '36'], 'stok' => 16],
                     ['warna' => 'Beige', 'ukuran' => ['32', '34'], 'stok' => 10],
+                ],
+            ],
+            [
+                'kategori' => 'Outer',
+                'nama' => 'Cardigan Knit Premium',
+                'deskripsi' => 'Cardigan rajut tebal yang hangat, bisa dipadukan dengan banyak gaya.',
+                'gambar' => 'images/figma/home/prod-cardigan.jpg',
+                'harga' => 249000,
+                'spesifikasi' => "Ukuran | Lebar Dada | Panjang\nM | 55 cm | 64 cm\nL | 58 cm | 66 cm\nXL | 62 cm | 68 cm",
+                'varian' => [
+                    ['warna' => 'Abu-abu', 'ukuran' => ['M', 'L', 'XL'], 'stok' => 13],
+                    ['warna' => 'Cokelat', 'ukuran' => ['L', 'XL'], 'stok' => 8],
                 ],
             ],
             [
@@ -96,15 +100,15 @@ class DemoSeeder extends Seeder
                 ],
             ],
             [
-                'kategori' => 'Outer',
-                'nama' => 'Cardigan Knit Premium',
-                'deskripsi' => 'Cardigan rajut tebal yang hangat, bisa dipadukan dengan banyak gaya.',
-                'gambar' => 'images/figma/home/prod-cardigan.jpg',
-                'harga' => 249000,
-                'spesifikasi' => "Ukuran | Lebar Dada | Panjang\nM | 55 cm | 64 cm\nL | 58 cm | 66 cm\nXL | 62 cm | 68 cm",
+                'kategori' => 'Atasan',
+                'nama' => 'Kemeja Oxford Casual',
+                'deskripsi' => 'Kemeja lengan panjang berbahan oxford, cocok untuk gaya smart casual.',
+                'gambar' => 'images/figma/home/cat-atasan.jpg',
+                'harga' => 189000,
+                'spesifikasi' => "Ukuran | Lebar Dada | Panjang | Panjang Lengan\nM | 54 cm | 70 cm | 60 cm\nL | 57 cm | 72 cm | 61 cm\nXL | 60 cm | 74 cm | 62 cm",
                 'varian' => [
-                    ['warna' => 'Abu-abu', 'ukuran' => ['M', 'L', 'XL'], 'stok' => 13],
-                    ['warna' => 'Cokelat', 'ukuran' => ['L', 'XL'], 'stok' => 8],
+                    ['warna' => 'Putih', 'ukuran' => ['M', 'L', 'XL'], 'stok' => 18],
+                    ['warna' => 'Biru', 'ukuran' => ['M', 'L', 'XL'], 'stok' => 12],
                 ],
             ],
             [
@@ -122,7 +126,7 @@ class DemoSeeder extends Seeder
             [
                 'kategori' => 'Sepatu',
                 'nama' => 'Sneakers Klasik Putih',
-                'deskripsi' => 'Sneakers putik minimalis berbahan kulit sintetis, nyaman dipakai seharian.',
+                'deskripsi' => 'Sneakers putih minimalis berbahan kulit sintetis, nyaman dipakai seharian.',
                 'gambar' => 'images/figma/home/cat-sepatu.jpg',
                 'harga' => 329000,
                 'spesifikasi' => "Ukuran | Panjang Kaki\n39 | 25 cm\n40 | 25.5 cm\n41 | 26 cm\n42 | 26.5 cm",
@@ -143,7 +147,7 @@ class DemoSeeder extends Seeder
             ],
         ];
 
-        foreach ($daftar as $p) {
+        foreach ($daftar as $i => $p) {
             $idProduk = (string) Str::uuid();
 
             DB::table('produk')->insert([
@@ -155,7 +159,7 @@ class DemoSeeder extends Seeder
                 'gambar' => $p['gambar'],
                 'harga' => $p['harga'],
                 'spesifikasi_ukuran' => $p['spesifikasi'],
-                'created_at' => now(),
+                'created_at' => now()->subMinutes($i + 1),
                 'updated_at' => now(),
             ]);
 
