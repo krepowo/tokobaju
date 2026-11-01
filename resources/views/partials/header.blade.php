@@ -1,6 +1,6 @@
 @php
     $active = $active ?? '';
-    $firstName = auth()->check() ? \Illuminate\Support\Str::of(auth()->user()->name)->before(' ') : null;
+    $firstName = auth()->check() ? \Illuminate\Support\Str::of(auth()->user()->nama)->before(' ') : null;
 @endphp
 
 <header class="site-header">

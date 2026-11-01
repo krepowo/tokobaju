@@ -14,11 +14,11 @@
         @csrf
 
         <div class="field">
-            <label for="name">Nama Lengkap</label>
-            <input type="text" id="name" name="name" value="{{ old('name') }}"
+            <label for="nama">Nama Lengkap</label>
+            <input type="text" id="nama" name="nama" value="{{ old('nama') }}"
                    placeholder="Masukkan nama lengkap" autocomplete="name"
-                   class="@error('name') is-invalid @enderror">
-            @error('name')
+                   class="@error('nama') is-invalid @enderror">
+            @error('nama')
                 <span class="field__error">{{ $message }}</span>
             @enderror
         </div>
@@ -34,11 +34,11 @@
         </div>
 
         <div class="field">
-            <label for="phone">Nomor Telepon</label>
-            <input type="tel" id="phone" name="phone" value="{{ old('phone') }}"
+            <label for="no_telepon">Nomor Telepon</label>
+            <input type="tel" id="no_telepon" name="no_telepon" value="{{ old('no_telepon') }}"
                    placeholder="Masukkan No Telepon" autocomplete="tel" inputmode="tel"
-                   class="@error('phone') is-invalid @enderror">
-            @error('phone')
+                   class="@error('no_telepon') is-invalid @enderror">
+            @error('no_telepon')
                 <span class="field__error">{{ $message }}</span>
             @enderror
         </div>
