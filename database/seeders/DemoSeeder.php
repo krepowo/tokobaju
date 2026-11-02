@@ -184,8 +184,10 @@ class DemoSeeder extends Seeder
     {
         $pulau = ['Jawa', 'Sumatera', 'Kalimantan', 'Sulawesi', 'Bali & Nusa Tenggara', 'Maluku & Papua'];
         $jasa = [
-            ['nama' => 'JNE Reguler', 'tarif' => [9000, 17000, 24000, 26000, 20000, 42000]],
-            ['nama' => 'J&T Express', 'tarif' => [8500, 16000, 23000, 25000, 19000, 40000]],
+            ['nama' => 'JNE', 'tarif' => [15000, 21000, 26000, 28000, 22000, 42000]],
+            ['nama' => 'J&T', 'tarif' => [15000, 20000, 25000, 27000, 21000, 40000]],
+            ['nama' => 'GoSend', 'tarif' => [20000, 28000, 34000, 36000, 30000, 50000]],
+            ['nama' => 'GoShop', 'tarif' => [18000, 26000, 32000, 34000, 28000, 48000]],
         ];
 
         $result = [];
@@ -300,7 +302,7 @@ class DemoSeeder extends Seeder
             }
 
             $subtotal = array_sum(array_map(fn ($it) => $it['harga'] * $it['jumlah'], $items));
-            $ongkir = 9000; // Jawa
+            $ongkir = 15000; // Jawa
             $total = $subtotal + $ongkir;
             $no = 'INV-'.$tanggal->format('Ymd').'-'.str_pad((string) ($idx + 1), 4, '0', STR_PAD_LEFT);
 
@@ -486,8 +488,8 @@ class DemoSeeder extends Seeder
                 'tanggal_pesanan' => $r['tanggal'],
                 'alamat_tujuan' => 'Jl. Demo No. 1, Kec. Coblong, Kota Bandung, Jawa Barat 40132',
                 'pulau_tujuan' => 'Jawa',
-                'ongkir' => 9000,
-                'total' => 279000 + 9000,
+                'ongkir' => 15000,
+                'total' => 279000 + 15000,
                 'status' => 'selesai',
                 'batas_bayar' => null,
                 'created_at' => $r['tanggal'],

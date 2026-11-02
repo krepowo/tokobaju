@@ -30,7 +30,10 @@ class CheckoutController extends Controller
 
         $subtotal = $items->sum('subtotal');
         $provinsi = DB::table('provinsi')->orderBy('nama_provinsi')->get();
-        $jasa = DB::table('jasa_pengiriman')->orderBy('nama_jasa')->get();
+        $urutan = ['JNE' => 0, 'J&T' => 1, 'GoSend' => 2, 'GoShop' => 3];
+        $jasa = DB::table('jasa_pengiriman')->get()
+            ->sortBy(fn ($j) => $urutan[$j->nama_jasa] ?? 99)
+            ->values();
         $tarif = DB::table('tarif_pengiriman')->get()
             ->groupBy('id_jasa')
             ->map(fn ($rows) => $rows->pluck('tarif', 'pulau_tujuan'));
@@ -52,6 +55,8 @@ class CheckoutController extends Controller
         }
 
         $data = $request->validate([
+            'nama_penerima' => ['required', 'string', 'max:100'],
+            'no_telepon' => ['required', 'string', 'max:20'],
             'provinsi' => ['required', 'string', 'max:100'],
             'kota_kabupaten' => ['required', 'string', 'max:100'],
             'kecamatan' => ['required', 'string', 'max:100'],
@@ -69,6 +74,7 @@ class CheckoutController extends Controller
         $total = $subtotal + $ongkir;
 
         $alamat = implode(', ', array_filter([
+            $data['nama_penerima'].' ('.$data['no_telepon'].')',
             $data['detail_alamat'],
             $data['kelurahan_desa'],
             $data['kecamatan'],
@@ -122,6 +128,7 @@ class CheckoutController extends Controller
             ]);
 
             auth()->user()->update([
+                'no_telepon' => $data['no_telepon'],
                 'provinsi' => $data['provinsi'],
                 'kota_kabupaten' => $data['kota_kabupaten'],
                 'kecamatan' => $data['kecamatan'],
