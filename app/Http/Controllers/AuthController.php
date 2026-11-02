@@ -46,7 +46,7 @@ class AuthController extends Controller
         $request->session()->regenerate();
 
         return redirect()->intended(
-            $user->isPenjual() ? route('admin.home') : route('home')
+            $user->isPenjual() ? route('admin.dashboard') : route('home')
         );
     }
 

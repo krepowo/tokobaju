@@ -33,4 +33,14 @@ class UkuranStok extends Model
     {
         return $this->belongsTo(Produk::class, 'id_produk', 'id_produk');
     }
+
+    public function keranjangItem()
+    {
+        return $this->hasMany(Keranjang::class, 'id_ukuran', 'id_ukuran');
+    }
+
+    public function detailPesanan()
+    {
+        return $this->hasMany(DetailPesanan::class, 'id_ukuran', 'id_ukuran');
+    }
 }

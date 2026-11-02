@@ -22,8 +22,26 @@ class Ulasan extends Model
         'tanggal',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'rating' => 'integer',
+            'tanggal' => 'datetime',
+        ];
+    }
+
     public function produk()
     {
         return $this->belongsTo(Produk::class, 'id_produk', 'id_produk');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_user', 'id_user');
+    }
+
+    public function detailPesanan()
+    {
+        return $this->belongsTo(DetailPesanan::class, 'id_detail', 'id_detail');
     }
 }

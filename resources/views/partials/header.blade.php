@@ -28,7 +28,7 @@
             </button>
 
             @auth
-                <a href="{{ auth()->user()->isPenjual() ? route('admin.home') : route('home') }}" class="hdr-cta">
+                <a href="{{ auth()->user()->isPenjual() ? route('admin.dashboard') : route('home') }}" class="hdr-cta">
                     Halo, {{ $firstName }}
                 </a>
                 <form method="POST" action="{{ route('logout') }}">
