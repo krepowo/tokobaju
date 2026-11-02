@@ -83,9 +83,30 @@ class CheckoutController extends Controller
         ]));
 
         $idPesanan = (string) Str::uuid();
-        $invoiceNo = 'INV-'.now()->format('Ymd').'-'.strtoupper(Str::random(4));
 
-        DB::transaction(function () use ($items, $data, $idPesanan, $invoiceNo, $pulau, $ongkir, $total, $alamat) {
+        DB::transaction(function () use ($items, $data, $idPesanan, $pulau, $ongkir, $total, $alamat) {
+            $prefix = 'INV-' . now()->format('Ymd') . '-';
+            $lastInvoice = DB::table('invoice')
+                ->where('no_invoice', 'LIKE', $prefix . '%')
+                ->lockForUpdate()
+                ->orderByDesc('no_invoice')
+                ->value('no_invoice');
+
+            if ($lastInvoice && preg_match('/^INV-\d{8}-(\d{4})$/', $lastInvoice, $matches)) {
+                $seq = ((int) $matches[1]) + 1;
+            } else {
+                $todayCount = DB::table('invoice')->where('no_invoice', 'LIKE', $prefix . '%')->count();
+                $seq = $todayCount + 1;
+            }
+
+            do {
+                $invoiceNo = $prefix . str_pad((string) $seq, 4, '0', STR_PAD_LEFT);
+                $exists = DB::table('invoice')->where('no_invoice', $invoiceNo)->exists();
+                if ($exists) {
+                    $seq++;
+                }
+            } while ($exists);
+
             DB::table('pesanan')->insert([
                 'id_pesanan' => $idPesanan,
                 'id_user' => auth()->id(),

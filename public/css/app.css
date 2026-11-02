@@ -167,17 +167,66 @@ button { font: inherit; }
     border: 1px solid #bfdbfe;
 }
 
-.alert--floating {
+.alert--danger, .alert--error {
+    background: var(--danger-soft, #fef3f2);
+    color: var(--danger, #b42318);
+    border: 1px solid var(--danger-line, #f6d3cf);
+}
+
+/* Floating Alert Container & Auto-dismiss */
+.floating-alerts-container {
     position: fixed;
     top: 76px;
     right: 24px;
-    z-index: 1000;
-    max-width: 420px;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 440px;
+    width: calc(100% - 48px);
+    pointer-events: none;
+}
+
+.alert--floating {
+    pointer-events: auto;
+    position: relative;
+    top: auto;
+    right: auto;
+    z-index: auto;
+    max-width: 100%;
     margin: 0;
-    padding: 12px 20px;
+    padding: 12px 16px;
     border-radius: 10px;
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    animation: alertSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+@keyframes alertSlideIn {
+    from { opacity: 0; transform: translateY(-12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.alert__content { display: flex; align-items: flex-start; gap: 10px; flex: 1; }
+.alert__icon { flex-shrink: 0; margin-top: 1px; }
+.alert__close-btn {
+    background: none;
+    border: 0;
+    font-size: 20px;
+    line-height: 1;
+    color: inherit;
+    opacity: 0.6;
+    cursor: pointer;
+    padding: 0 4px;
+    border-radius: 4px;
+    transition: opacity 0.15s;
+    flex-shrink: 0;
+}
+.alert__close-btn:hover { opacity: 1; }
+.alert__error-list { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.4; }
 
 /* ========================================================= SITE HEADER ==== */
 .site-header {
@@ -2863,42 +2912,491 @@ button { font: inherit; }
 .checkout__submit:hover { filter: brightness(1.04); }
 
 /* =============================== pesanan =============================== */
-.pesanan { max-width: 1280px; margin: 0 auto; padding: 29px 48px 96px; }
-.pesanan__head { display: flex; align-items: center; gap: 14px; }
-.pesanan__head h1 { font-size: 22px; font-weight: 600; color: #111; }
-.pesanan__status { font-size: 12.5px; font-weight: 600; color: #795a01; background: #ffdf9c; padding: 5px 12px; border-radius: 999px; }
-.pesanan__meta { margin: 8px 0 0; color: #757575; font-size: 14px; }
-.pesanan__due { margin-top: 14px; background: #fff7e6; border: 1px solid #ffe1a8; color: #7a5b00; padding: 12px 16px; border-radius: 8px; font-size: 14px; }
+.pesanan { max-width: 1200px; margin: 0 auto; padding: 24px 32px 80px; }
 
-.pesanan__grid { display: flex; align-items: flex-start; gap: 28px; margin-top: 22px; }
-.pesanan__section { flex: 1; background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; min-width: 0; }
-.pesanan__section h2 { font-size: 16px; font-weight: 600; color: #111; margin-bottom: 14px; }
-.pesanan__item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
-.pesanan__item:last-child { border-bottom: 0; }
-.pesanan__item img { width: 54px; height: 54px; border-radius: 8px; object-fit: cover; background: #f0efea; flex: none; }
-.pesanan__item-info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-.pesanan__item-name { font-size: 14px; font-weight: 600; color: #111; }
-.pesanan__item-var { font-size: 12.5px; color: #757575; }
-.pesanan__item-price { font-size: 12.5px; color: #757575; }
-.pesanan__item-sub { font-size: 14px; font-weight: 600; color: #111; flex: none; }
-.pesanan__aside { flex: 0 0 360px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
-.pesanan__line { margin: 4px 0; font-size: 14px; color: #111; }
-.pesanan__line.muted { color: #757575; font-size: 12.5px; }
-.pesanan__row { display: flex; justify-content: space-between; font-size: 14px; color: #444748; padding: 5px 0; }
-.pesanan__row--total { font-size: 17px; font-weight: 700; color: #111; border-top: 1px solid #eee; margin-top: 6px; padding-top: 12px; }
-.pesanan__rek { margin: 14px 0; font-size: 13.5px; color: #444748; line-height: 1.6; }
-.pesanan__rek b { color: #111; }
-.pesanan__upload { width: 100%; min-height: 46px; background: #ffd577; color: #795a01; border: 0; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; }
-.pesanan__upload:disabled { background: #f0f0f0; color: #aaa; cursor: not-allowed; }
-.pesanan__hint { font-size: 12px; color: #999; text-align: center; margin: 8px 0 0; }
+/* Header Bar */
+.pesanan__header-bar { margin-bottom: 20px; }
+.pesanan__header-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.pesanan__title { font-size: 22px; font-weight: 700; color: #111827; margin: 0; }
+.pesanan__invoice-tag { font-size: 12px; font-weight: 600; color: #4b5563; background: #f3f4f6; border: 1px solid #e5e7eb; padding: 3px 10px; border-radius: 999px; letter-spacing: 0.3px; font-family: monospace; }
+.pesanan__create-date { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: #9ca3af; margin: 6px 0 0; }
 
-/* checkout button (cart) as link */
-.cart__checkout { display: flex; align-items: center; justify-content: center; text-align: center; text-decoration: none; }
+/* Stepper (Mockup 2.6.1 - 2.6.6) */
+.pesanan-stepper { background: #ffffff; border: 1px solid #f0f0f0; border-radius: 14px; padding: 20px 24px 22px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+.pesanan-stepper__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
+.pesanan-stepper__title { font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: #6b7280; text-transform: uppercase; }
+.pesanan-stepper__badge { font-size: 11.5px; font-weight: 600; padding: 3px 12px; border-radius: 999px; background: #fef3c7; color: #b45309; }
+.pesanan-stepper__track { display: grid; grid-template-columns: repeat(5, 1fr); position: relative; }
+.pesanan-stepper__step { display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; }
+.pesanan-stepper__node-wrap { position: relative; width: 100%; display: flex; align-items: center; justify-content: center; height: 32px; margin-bottom: 10px; }
+.pesanan-stepper__line { position: absolute; top: 50%; height: 2px; background: #e5e7eb; transform: translateY(-50%); z-index: 1; }
+.pesanan-stepper__line--left { left: 0; right: 50%; margin-right: 16px; }
+.pesanan-stepper__line--right { left: 50%; right: 0; margin-left: 16px; }
+.pesanan-stepper__line.is-done { background: #16a34a; }
+.pesanan-stepper__node { position: relative; z-index: 2; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; background: #f3f4f6; color: #9ca3af; border: 1.5px solid #e5e7eb; transition: all 0.2s ease; flex-shrink: 0; }
+.pesanan-stepper__step.is-done .pesanan-stepper__node { background: #16a34a; border-color: #16a34a; color: #ffffff; }
+.pesanan-stepper__step.is-active .pesanan-stepper__node { background: #d97706; border-color: #b45309; color: #ffffff; box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.2); }
+.pesanan-stepper__info { display: flex; flex-direction: column; align-items: center; }
+.pesanan-stepper__step-title { font-size: 12.5px; font-weight: 600; color: #9ca3af; line-height: 1.3; }
+.pesanan-stepper__step.is-done .pesanan-stepper__step-title, .pesanan-stepper__step.is-active .pesanan-stepper__step-title { color: #111827; font-weight: 700; }
+.pesanan-stepper__step-desc { font-size: 11px; color: #9ca3af; margin-top: 3px; }
+.pesanan-stepper__step-desc.is-active-desc { color: #b45309; font-weight: 600; }
+.pesanan-stepper--cancelled { background: #fef2f2; border-color: #fecaca; padding: 16px 20px; }
+.pesanan-stepper__cancelled-box { display: flex; align-items: center; gap: 14px; color: #b91c1c; font-size: 13.5px; }
+.pesanan-stepper__cancelled-box strong { display: block; font-size: 14.5px; margin-bottom: 2px; }
 
-@media (max-width: 860px) {
-    .checkout__layout, .pesanan__grid { flex-direction: column; }
-    .checkout__summary, .pesanan__aside { flex: none; width: 100%; position: static; }
-    .checkout__grid { grid-template-columns: 1fr; }
+/* Grid 2 Kolom */
+.pesanan__grid { display: flex; align-items: flex-start; gap: 24px; }
+.pesanan__col-main { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+.pesanan__col-aside { flex: 0 0 380px; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+
+/* Cards Utama */
+.pesanan-card { background: #ffffff; border: 1px solid #f0f0f0; border-radius: 14px; padding: 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+.pesanan-card--gold-top { border-top: 3.5px solid #dfb169; }
+.pesanan-card__head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+.pesanan-card__head-status { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+.pesanan-card__title { font-size: 16px; font-weight: 700; color: #111827; margin: 0; display: flex; align-items: center; }
+.pesanan-card__subtitle { font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: #6b7280; text-transform: uppercase; margin: 0 0 14px; }
+.pesanan-card__subtitle-text { font-size: 11.5px; color: #6b7280; }
+.pesanan-card__pretitle { font-size: 10.5px; font-weight: 700; color: #d97706; text-transform: uppercase; letter-spacing: 0.05em; display: block; }
+.pesanan-card__meta-tag { font-size: 12px; color: #9ca3af; font-weight: 500; }
+
+/* Card Rincian Belanja (Item Box) */
+.pesanan__item-list { display: flex; flex-direction: column; gap: 10px; }
+.pesanan-product-box { background: #f9fafb; border: 1px solid #f3f4f6; border-radius: 10px; padding: 12px 14px; display: flex; align-items: center; gap: 14px; }
+.pesanan-product-box__img { width: 52px; height: 52px; border-radius: 8px; object-fit: cover; background: #ffffff; flex-shrink: 0; border: 1px solid #f0f0f0; }
+.pesanan-product-box__info { flex: 1; min-width: 0; }
+.pesanan-product-box__name { font-size: 13.5px; font-weight: 600; color: #111827; margin: 0; line-height: 1.35; }
+.pesanan-product-box__variant { font-size: 11.5px; color: #6b7280; margin: 3px 0 2px; }
+.pesanan-product-box__price { font-size: 11.5px; color: #9ca3af; }
+.pesanan-product-box__subtotal { font-size: 14px; font-weight: 700; color: #111827; flex-shrink: 0; }
+
+.pesanan-bill-recap { margin-top: 16px; padding-top: 14px; border-top: 1px solid #f3f4f6; }
+.pesanan-bill-recap__row { display: flex; justify-content: space-between; font-size: 12.5px; color: #6b7280; padding: 4px 0; }
+.pesanan-bill-recap__row--total { margin-top: 8px; padding-top: 10px; border-top: 1px solid #f3f4f6; color: #111827; font-weight: 700; font-size: 14px; align-items: baseline; }
+.pesanan-bill-recap__total-amount { font-size: 18px; font-weight: 800; color: #111827; }
+
+/* Card Informasi Pengiriman (2 Box) */
+.pesanan-shipping-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.pesanan-subbox { background: #f9fafb; border: 1px solid #f3f4f6; border-radius: 10px; padding: 14px; }
+.pesanan-subbox--courier { display: flex; flex-direction: column; justify-content: space-between; }
+.pesanan-subbox__label { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: #d97706; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+.pesanan-subbox__name { font-size: 13px; font-weight: 700; color: #111827; }
+.pesanan-subbox__phone { font-size: 11.5px; color: #9ca3af; margin-bottom: 4px; }
+.pesanan-subbox__text { font-size: 12px; color: #4b5563; line-height: 1.45; margin: 0; }
+.pesanan-subbox__hint { font-size: 11px; color: #9ca3af; margin: 4px 0 10px; line-height: 1.4; }
+.pesanan-tracking-box { background: #f3f4f6; border-radius: 6px; padding: 6px 10px; display: flex; justify-content: space-between; align-items: center; }
+.pesanan-tracking-box__label { font-size: 11px; color: #6b7280; font-weight: 500; }
+.pesanan-tracking-box__val { display: flex; align-items: center; gap: 8px; font-family: monospace; font-size: 12px; font-weight: 700; color: #111827; }
+.pesanan-tracking-box__empty { font-size: 11.5px; color: #9ca3af; font-style: italic; }
+
+.pesanan-delivered-notice { background: #ecfdf3; border: 1px solid #bbf7d0; border-radius: 6px; padding: 8px 10px; margin-top: 8px; }
+.pesanan-delivered-notice__title { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #166534; }
+.pesanan-delivered-notice__time { font-size: 11px; color: #15803d; display: block; margin-top: 2px; }
+
+/* Panel Kanan: Countdown */
+.countdown-card { background: #fffbeb; border: 1px solid #fef3c7; border-radius: 14px; padding: 18px 20px; text-align: center; }
+.countdown-card__header { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 11px; font-weight: 700; color: #b45309; text-transform: uppercase; letter-spacing: 0.05em; }
+.countdown-card__digits { font-size: 28px; font-weight: 800; color: #111827; letter-spacing: 2px; margin: 10px 0 6px; }
+.countdown-card__footer { font-size: 11.5px; color: #92400e; }
+
+/* Bank & Transfer Components */
+.pesanan-bank-banner { background: #f9fafb; border: 1px solid #f3f4f6; border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.pesanan-bank-banner__logo { background: #00569b; color: #ffffff; font-weight: 800; font-size: 11.5px; padding: 4px 7px; border-radius: 4px; letter-spacing: 0.5px; flex-shrink: 0; }
+.pesanan-bank-banner__meta { display: flex; flex-direction: column; }
+.pesanan-bank-banner__meta strong { font-size: 12.5px; font-weight: 700; color: #111827; }
+.pesanan-bank-banner__meta span { font-size: 9.5px; font-weight: 600; color: #6b7280; letter-spacing: 0.03em; }
+
+.pesanan-copy-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: #ffffff; }
+.pesanan-copy-card__info { display: flex; flex-direction: column; }
+.pesanan-copy-card__label { font-size: 10.5px; color: #6b7280; }
+.pesanan-copy-card__val { font-size: 15px; font-weight: 700; color: #111827; font-family: monospace; margin: 1px 0; }
+.pesanan-copy-card__val--amber { font-family: inherit; font-size: 16px; font-weight: 800; color: #b45309; }
+.pesanan-copy-card__owner { font-size: 10.5px; color: #9ca3af; }
+.pesanan-copy-card__note { font-size: 10px; color: #dc2626; margin-top: 1px; }
+
+.pesanan-notice-row { display: flex; gap: 8px; font-size: 11.5px; color: #6b7280; line-height: 1.45; margin: 12px 0 16px; }
+.pesanan-notice-row svg { flex-shrink: 0; margin-top: 1px; color: #d97706; }
+.pesanan-notice-row p { margin: 0; }
+.pesanan-notice-row--amber { background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px; padding: 10px 12px; margin: 14px 0 16px; color: #92400e; }
+
+.pesanan-danger-box { margin-bottom: 12px; padding: 10px 12px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; font-size: 12px; color: #991b1b; }
+.pesanan-danger-box strong { display: flex; align-items: center; gap: 6px; font-size: 13px; margin-bottom: 4px; }
+.pesanan-danger-box p { margin: 0; }
+
+.pesanan-wa-help { text-align: center; margin-top: 12px; font-size: 11.5px; color: #6b7280; }
+.pesanan-wa-help a { color: #b45309; font-weight: 600; text-decoration: underline; margin-left: 4px; }
+
+.pesanan-security-badge { background: #f9fafb; border: 1px solid #f3f4f6; border-radius: 12px; padding: 12px 14px; display: flex; align-items: flex-start; gap: 10px; }
+.pesanan-security-badge svg { flex-shrink: 0; margin-top: 2px; }
+.pesanan-security-badge strong { display: block; font-size: 12px; font-weight: 700; color: #111827; margin-bottom: 2px; }
+.pesanan-security-badge p { font-size: 11px; color: #6b7280; margin: 0; line-height: 1.4; }
+
+/* Buttons Style */
+.btn-primary-dark { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 44px; background: #111827; color: #ffffff; border: 0; border-radius: 8px; font-size: 13.5px; font-weight: 600; cursor: pointer; text-decoration: none; transition: background 0.15s ease; box-sizing: border-box; }
+.btn-primary-dark:hover { background: #1f2937; color: #ffffff; }
+.btn-outline-dark { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 40px; background: #ffffff; color: #374151; border: 1px solid #d1d5db; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; transition: all 0.15s ease; box-sizing: border-box; }
+.btn-outline-dark:hover { background: #f9fafb; color: #111827; border-color: #9ca3af; }
+.btn-copy { display: inline-flex; align-items: center; gap: 4px; padding: 4px 9px; font-size: 11.5px; font-weight: 600; color: #374151; background: #ffffff; border: 1px solid #d1d5db; border-radius: 6px; cursor: pointer; transition: all 0.15s ease; }
+.btn-copy:hover { background: #f9fafb; color: #111827; border-color: #9ca3af; }
+
+/* Badges */
+.pesanan-badge-amber { display: inline-flex; align-items: center; gap: 5px; background: #fef3c7; color: #b45309; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; }
+.pesanan-badge-amber .dot { width: 6px; height: 6px; border-radius: 50%; background: #d97706; display: inline-block; }
+.pesanan-badge-green { display: inline-flex; align-items: center; gap: 4px; background: #ecfdf3; color: #067647; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px; }
+.pesanan-badge-grey { display: inline-flex; align-items: center; background: #f3f4f6; color: #4b5563; font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 999px; letter-spacing: 0.03em; }
+.pesanan-badge-red { display: inline-flex; align-items: center; gap: 4px; background: #fef2f2; color: #b91c1c; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px; }
+
+/* Proof of Transfer Card (Shared across statuses) */
+.pesanan-proof-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+.pesanan-proof-card__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f3f4f6;
+}
+.pesanan-proof-card__title {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.pesanan-proof-card__body {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.pesanan-proof-card__thumb-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 160px;
+    height: 95px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #0f172a;
+    border: 1px solid #e2e8f0;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.pesanan-proof-card__thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.pesanan-proof-card__thumb-wrap:hover .pesanan-proof-card__thumb {
+    transform: scale(1.05);
+    opacity: 0.85;
+}
+.pesanan-proof-card__overlay-btn {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 23, 42, 0.35);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+.pesanan-proof-card__thumb-wrap:hover .pesanan-proof-card__overlay-btn {
+    opacity: 1;
+}
+.pesanan-proof-card__info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.pesanan-proof-card__date {
+    font-size: 11.5px;
+    color: #6b7280;
+    line-height: 1.4;
+    word-break: break-word;
+}
+.pesanan-proof-card__btn-view {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #111827;
+    background: #f9fafb;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    align-self: flex-start;
+}
+.pesanan-proof-card__btn-view:hover {
+    background: #111827;
+    color: #ffffff;
+    border-color: #111827;
+}
+
+@media (max-width: 480px) {
+    .pesanan-proof-card__body {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .pesanan-proof-card__thumb-wrap {
+        max-width: 100%;
+        height: 140px;
+    }
+}
+
+/* Status: Verifikasi */
+.pesanan-verify-amount { background: #f9fafb; border: 1px solid #f3f4f6; border-radius: 8px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; margin: 12px 0; }
+.pesanan-verify-amount__label { font-size: 11px; color: #6b7280; display: block; }
+.pesanan-verify-amount__val { font-size: 16px; font-weight: 800; color: #111827; margin-top: 1px; }
+
+.pesanan-attachment-section { margin-bottom: 12px; }
+.pesanan-attachment-section__label { font-size: 10.5px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 6px; }
+.pesanan-attachment-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px 12px; display: flex; align-items: center; gap: 10px; }
+.pesanan-attachment-box__thumb { width: 38px; height: 38px; border-radius: 6px; object-fit: cover; border: 1px solid #e2e8f0; flex-shrink: 0; }
+.pesanan-attachment-box__info { flex: 1; min-width: 0; }
+.pesanan-attachment-box__name { font-size: 12px; font-weight: 700; color: #111827; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pesanan-attachment-box__meta { font-size: 10.5px; color: #9ca3af; display: block; }
+.pesanan-attachment-box__eye { color: #6b7280; padding: 4px; border-radius: 4px; display: flex; align-items: center; }
+
+.pesanan-card__footer-meta { display: flex; justify-content: space-between; align-items: center; font-size: 10.5px; color: #9ca3af; margin-top: 14px; padding-top: 10px; border-top: 1px solid #f3f4f6; }
+.pesanan-card__footer-left { display: flex; align-items: center; gap: 4px; }
+
+.pesanan-info-card { background: #fffbeb; border: 1px solid #fef3c7; border-radius: 12px; padding: 14px 16px; }
+.pesanan-info-card__title { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #92400e; margin-bottom: 6px; }
+.pesanan-info-card__row { font-size: 11.5px; color: #78350f; padding: 1px 0; }
+.pesanan-info-card__note { font-size: 10.5px; color: #92400e; margin: 6px 0 0; line-height: 1.4; }
+
+.pesanan-info-card--delivery { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.pesanan-info-card__icon-wrap { width: 38px; height: 38px; border-radius: 50%; background: #fef3c7; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.pesanan-info-card__tag { font-size: 10.5px; font-weight: 700; color: #b45309; text-transform: uppercase; letter-spacing: 0.05em; display: block; }
+.pesanan-info-card__highlight { font-size: 14.5px; font-weight: 800; color: #111827; margin-top: 1px; }
+
+/* Status: Diproses */
+.pesanan-verify-success-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.pesanan-verify-success-icon { width: 26px; height: 26px; border-radius: 50%; background: #16a34a; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.pesanan-details-table { background: #f9fafb; border: 1px solid #f3f4f6; border-radius: 8px; padding: 12px 14px; margin-top: 8px; }
+.pesanan-details-table__row { display: flex; justify-content: space-between; font-size: 12px; color: #6b7280; padding: 3px 0; }
+.pesanan-details-table__row strong { color: #111827; font-weight: 600; }
+.pesanan-details-table__divider { height: 1px; background: #e5e7eb; margin: 8px 0; }
+.pesanan-details-table__row--total { font-size: 13px; font-weight: 700; color: #111827; }
+.pesanan-details-table__amount { font-size: 15px; font-weight: 800; color: #111827; }
+
+.pesanan-packing-policy { margin-bottom: 14px; padding: 0 2px; }
+.pesanan-packing-policy__title { font-size: 10.5px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 6px; }
+.pesanan-packing-policy__list { list-style: none; padding: 0; margin: 0; font-size: 11.5px; color: #4b5563; line-height: 1.5; }
+.pesanan-packing-policy__list li { position: relative; padding-left: 14px; margin-bottom: 4px; }
+.pesanan-packing-policy__list li::before { content: "•"; position: absolute; left: 2px; color: #9ca3af; }
+
+.pesanan-helper-subtext { font-size: 11px; color: #9ca3af; text-align: center; line-height: 1.4; margin: 8px 0 0; }
+
+/* Status: Dikirim / Selesai */
+.pesanan-cost-rows { margin-top: 10px; }
+.pesanan-cost-row { display: flex; justify-content: space-between; font-size: 12.5px; color: #6b7280; padding: 3px 0; }
+.pesanan-cost-row--total { align-items: baseline; margin-top: 8px; }
+.pesanan-cost-row__total-label { font-size: 10.5px; font-weight: 700; color: #6b7280; letter-spacing: 0.04em; display: block; }
+.pesanan-cost-row__bank-label { font-size: 11px; color: #9ca3af; display: block; }
+.pesanan-cost-row__paid-label { font-size: 11px; font-weight: 600; color: #16a34a; display: block; }
+.pesanan-cost-row__total-val { font-size: 17px; font-weight: 800; color: #111827; }
+
+.pesanan-success-banner { background: #ecfdf3; border: 1px solid #bbf7d0; border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.pesanan-success-banner__icon { width: 28px; height: 28px; border-radius: 50%; background: #16a34a; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.pesanan-success-banner__title { font-size: 14px; font-weight: 700; color: #166534; margin: 0; }
+.pesanan-success-banner__subtitle { font-size: 11px; color: #15803d; margin-top: 1px; display: block; }
+
+/* Modal Styles */
+.custom-modal { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.custom-modal__overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); }
+.custom-modal__dialog {
+    position: relative;
+    z-index: 10000;
+    background: #ffffff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+    overflow: hidden;
+}
+.custom-modal__header {
+    padding: 22px 24px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid #f3f4f6;
+    flex-shrink: 0;
+}
+.custom-modal__title { font-size: 17px; font-weight: 700; color: #111827; margin: 0; }
+.custom-modal__subtitle { font-size: 12.5px; color: #6b7280; margin: 4px 0 0; line-height: 1.4; }
+.custom-modal__step-badge { font-size: 11px; font-weight: 700; color: #6b7280; background: #f3f4f6; padding: 3px 8px; border-radius: 999px; letter-spacing: 0.05em; }
+.custom-modal__form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+.custom-modal__body {
+    padding: 20px 24px;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}
+.modal-dropzone { background: #f9fafb; border: 1.5px dashed #d1d5db; border-radius: 12px; padding: 26px 20px; text-align: center; cursor: pointer; transition: border-color 0.15s ease; }
+.modal-dropzone:hover { border-color: #dfb169; }
+.modal-dropzone__icon { width: 44px; height: 44px; border-radius: 50%; background: #fef3c7; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; }
+.modal-dropzone__text { display: block; font-size: 13px; font-weight: 600; color: #111827; margin-bottom: 3px; }
+.modal-dropzone__sub { display: block; font-size: 11px; color: #9ca3af; margin-bottom: 12px; }
+.btn-choose-file { display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #d1d5db; color: #374151; font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 6px; cursor: pointer; }
+.modal-hidden-file { display: none; }
+.modal-preview { margin-top: 12px; text-align: center; }
+.modal-preview img { max-width: 100%; max-height: 240px; border-radius: 6px; border: 1px solid #e2e8f0; object-fit: contain; }
+.modal-error-box {
+    color: #b91c1c;
+    font-size: 12px;
+    margin-top: 12px;
+    font-weight: 600;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    padding: 9px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.btn-primary-dark:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    background: #9ca3af;
+}
+.modal-help-box { display: flex; gap: 10px; background: #f9fafb; border: 1px solid #f3f4f6; border-radius: 10px; padding: 12px 14px; margin-top: 14px; font-size: 11.5px; line-height: 1.45; text-align: left; }
+.modal-help-box strong { display: block; color: #111827; margin-bottom: 2px; }
+.modal-help-box p { color: #6b7280; margin: 0; }
+.custom-modal__footer {
+    padding: 16px 24px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    border-top: 1px solid #f3f4f6;
+    flex-shrink: 0;
+    position: sticky;
+    bottom: 0;
+    background: #ffffff;
+    z-index: 10;
+}
+.btn-modal-cancel { background: #f3f4f6; color: #374151; border: 0; border-radius: 8px; font-size: 13px; font-weight: 600; padding: 9px 18px; cursor: pointer; }
+
+/* Lightbox Modal */
+.lightbox-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+.lightbox-modal__overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(4px);
+}
+.lightbox-modal__container {
+    position: relative;
+    z-index: 10002;
+    max-width: 90vw;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.lightbox-modal__img {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.15);
+    background: #000000;
+}
+.lightbox-modal__caption {
+    color: #f3f4f6;
+    font-size: 12.5px;
+    margin-top: 10px;
+    text-align: center;
+}
+.lightbox-modal__close {
+    position: absolute;
+    top: -42px;
+    right: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border: 0;
+    color: #ffffff;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease;
+}
+.lightbox-modal__close:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* Back Link to Pesanan Saya */
+.pesanan__back-bar { margin-bottom: 16px; }
+.pesanan__back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #4b5563;
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 8px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    transition: all 0.15s ease;
+}
+.pesanan__back-btn:hover {
+    color: #111827;
+    border-color: #111827;
+    background: #f9fafb;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+    .pesanan { padding: 20px 16px 60px; }
+    .pesanan__grid { flex-direction: column; }
+    .pesanan__col-aside { width: 100%; flex: none; }
+    .pesanan-shipping-grid { grid-template-columns: 1fr; }
+    .pesanan-stepper__track { flex-direction: column; align-items: flex-start; gap: 12px; display: flex; }
+    .pesanan-stepper__step { flex-direction: row; align-items: center; gap: 12px; text-align: left; width: 100%; }
+    .pesanan-stepper__node-wrap { width: auto; margin-bottom: 0; }
+    .pesanan-stepper__line { display: none; }
+    .pesanan-stepper__info { align-items: flex-start; }
 }
 
 

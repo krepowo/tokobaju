@@ -13,11 +13,9 @@
 <body class="site-body">
     @include('partials.header', ['active' => trim($__env->yieldContent('active'))])
 
-    <main class="site-main @yield('main-class')">
-        @if (session('success'))
-            <div class="alert alert--success alert--floating">{{ session('success') }}</div>
-        @endif
+    @include('partials.flash-messages')
 
+    <main class="site-main @yield('main-class')">
         @yield('content')
     </main>
 

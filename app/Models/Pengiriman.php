@@ -20,10 +20,12 @@ class Pengiriman extends Model
         'id_pesanan',
         'no_resi',
         'tanggal_kirim',
+        'tanggal_diterima',
     ];
 
     protected $casts = [
         'tanggal_kirim' => 'datetime',
+        'tanggal_diterima' => 'datetime',
     ];
 
     public function pesanan(): BelongsTo

@@ -44,6 +44,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
     Route::get('/pesanan', [PesananController::class, 'index'])->name('pesanan.index');
     Route::get('/pesanan/{pesanan}', [PesananController::class, 'show'])->name('pesanan.show');
+    Route::get('/pesanan/{pesanan}/invoice', [PesananController::class, 'invoice'])->name('pesanan.invoice');
+    Route::get('/pesanan/{pesanan}/invoice/unduh', [PesananController::class, 'unduhInvoice'])->name('pesanan.invoice.unduh');
+    Route::post('/pesanan/{pesanan}/upload-bukti', [PesananController::class, 'uploadBukti'])->name('pesanan.upload-bukti');
+    Route::post('/pesanan/{pesanan}/konfirmasi-terima', [PesananController::class, 'konfirmasiTerima'])->name('pesanan.konfirmasi-terima');
 });
 
 // =========================================================================
