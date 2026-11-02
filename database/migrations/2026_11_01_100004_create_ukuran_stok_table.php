@@ -13,6 +13,7 @@ return new class extends Migration
             $table->uuid('id_produk');
             $table->string('ukuran', 10);
             $table->string('warna', 30);
+            $table->string('gambar', 255)->nullable();
             $table->unsignedInteger('stok')->default(0);
             $table->boolean('aktif')->default(true);
             $table->timestamps();

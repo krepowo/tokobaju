@@ -8,21 +8,22 @@
 </head>
 <body class="auth-body">
     <div class="auth">
-        {{-- Panel kiri: foto toko + overlay 80% + logo + tagline (sesuai Figma) --}}
-        <aside class="auth__visual">
-            <div class="auth__photo" role="img" aria-label="Interior Gavin Fashion Store"></div>
-            <div class="auth__veil" aria-hidden="true"></div>
-            <div class="auth__stage">
-                <img class="auth__logo" src="{{ asset('images/figma/logo.png') }}" alt="Gavin Fashion Store">
-                <p class="auth__tagline">Temukan gaya terbaikmu</p>
-                <p class="auth__tagsub">Pakaian pilihan untuk gaya sehari-hari.</p>
+        <!-- Panel kiri: Brand visual dengan foto boutique & logo emas resmi Gavin -->
+        <aside class="auth__brand" role="img" aria-label="Interior Gavin Fashion Store">
+            <div class="auth__brand-overlay">
+                <div class="auth__brand-content">
+                    <img src="{{ asset('images/logo-gavin.png') }}" alt="Gavin Fashion Store" class="auth__brand-logo">
+                    <h1 class="auth__brand-title">Temukan gaya terbaikmu</h1>
+                    <p class="auth__brand-subtitle">Pakaian pilihan untuk gaya sehari-hari.</p>
+                </div>
             </div>
         </aside>
 
         <main class="auth__panel">
-            <div class="auth__card @yield('card_modifier')">
+            <div class="auth__card">
                 @yield('content')
             </div>
+            <p class="auth__foot">&copy; {{ date('Y') }} Gavin Fashion Store. Hak cipta dilindungi.</p>
         </main>
     </div>
 

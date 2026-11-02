@@ -107,4 +107,14 @@ class User extends Authenticatable
     {
         return $this->email ?: (string) $this->no_telepon;
     }
+
+    public function keranjang()
+    {
+        return $this->hasMany(Keranjang::class, 'id_user', 'id_user');
+    }
+
+    public function keranjangCount(): int
+    {
+        return (int) $this->keranjang()->sum('jumlah');
+    }
 }

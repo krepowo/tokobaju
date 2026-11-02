@@ -1,8 +1,5 @@
 # Toko Baju Online — Gavin Fashion Store
 
-Aplikasi web toko baju online untuk **Kelompok 1**. Dibangun dengan **Laravel 12** dan
-**MySQL** (via Laragon), tampilan memakai Blade + CSS statis (tanpa build Vite).
-
 ## Stack
 
 | Komponen | Teknologi |
