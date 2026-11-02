@@ -2,7 +2,7 @@
 
 @section('title', 'Pesanan Saya')
 @section('active', 'pesanan')
-@section('main_class', 'site-main--catalog')
+@section('main-class', 'site-main--catalog')
 
 @section('content')
 <div class="pesanan-list">

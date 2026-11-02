@@ -2,7 +2,7 @@
 
 @section('title', 'Detail Pesanan')
 @section('active', 'keranjang')
-@section('main_class', 'site-main--catalog')
+@section('main-class', 'site-main--catalog')
 
 @section('content')
 <div class="pesanan">
@@ -27,7 +27,7 @@
             <h2>Produk</h2>
             @foreach ($order->detailPesanan as $d)
                 <div class="pesanan__item">
-                    <img src="{{ asset($d->ukuran->produk->gambar) }}" alt="{{ $d->ukuran->produk->nama_produk }}">
+                    <img src="{{ $d->ukuran->produk->gambar_url }}" alt="{{ $d->ukuran->produk->nama_produk }}">
                     <div class="pesanan__item-info">
                         <span class="pesanan__item-name">{{ $d->ukuran->produk->nama_produk }}</span>
                         <span class="pesanan__item-var">{{ $d->ukuran->warna }} · {{ $d->ukuran->ukuran }} × {{ $d->jumlah }}</span>

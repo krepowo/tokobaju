@@ -57,33 +57,43 @@ class AuthController extends Controller
 
     public function register(Request $request): RedirectResponse
     {
-        $request->merge([
-            'email' => mb_strtolower(trim((string) $request->input('email'))),
-            'no_telepon' => User::normalizePhone($request->input('no_telepon')),
-        ]);
-
         $data = $request->validate([
-            'nama' => ['required', 'string', 'min:3', 'max:100'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'no_telepon' => ['required', 'string', 'digits_between:10,15', 'unique:users,no_telepon'],
+            'name' => ['required', 'string', 'min:3', 'max:100'],
+            'email' => ['required', 'string', 'email', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:20'],
             'password' => ['required', 'string', 'min:8', 'max:72'],
         ], [
-            'nama.required' => 'Nama lengkap wajib diisi.',
-            'nama.min' => 'Nama lengkap minimal 3 karakter.',
+            'name.required' => 'Nama lengkap wajib diisi.',
+            'name.min' => 'Nama lengkap minimal 3 karakter.',
             'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
-            'email.unique' => 'Email sudah terdaftar.',
-            'no_telepon.required' => 'Nomor telepon wajib diisi.',
-            'no_telepon.digits_between' => 'Nomor telepon harus terdiri dari 10 sampai 15 digit.',
-            'no_telepon.unique' => 'Nomor telepon sudah terdaftar.',
             'password.required' => 'Kata sandi wajib diisi.',
             'password.min' => 'Kata sandi minimal 8 karakter.',
         ]);
 
+        $email = mb_strtolower(trim($data['email']));
+        if (User::whereRaw('LOWER(email) = ?', [$email])->exists()) {
+            throw ValidationException::withMessages([
+                'email' => 'Email ini sudah terdaftar.',
+            ]);
+        }
+
+        $phone = null;
+        if (! empty($data['phone'])) {
+            $phone = User::normalizePhone($data['phone']);
+            if ($phone && User::where('no_telepon', $phone)->orWhere('phone', $phone)->exists()) {
+                throw ValidationException::withMessages([
+                    'phone' => 'Nomor telepon ini sudah terdaftar.',
+                ]);
+            }
+        }
+
         $user = User::create([
-            'nama' => $data['nama'],
-            'email' => $data['email'],
-            'no_telepon' => $data['no_telepon'],
+            'nama' => $data['name'],
+            'name' => $data['name'],
+            'email' => $email,
+            'no_telepon' => $phone,
+            'phone' => $phone,
             'password' => $data['password'],
             'role' => User::ROLE_PELANGGAN,
         ]);
@@ -91,7 +101,7 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect()->route('home')->with('success', 'Registrasi berhasil. Selamat datang, '.$user->nama.'.');
+        return redirect()->route('home')->with('success', 'Registrasi berhasil. Selamat datang, '.$user->name.'.');
     }
 
     public function logout(Request $request): RedirectResponse

@@ -3,36 +3,52 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class DetailPesanan extends Model
 {
-    use HasUuids;
+    use HasFactory, HasUuids;
 
     protected $table = 'detail_pesanan';
-
     protected $primaryKey = 'id_detail';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
-        'id_pesanan', 'id_ukuran', 'jumlah', 'harga_satuan', 'subtotal',
+        'id_pesanan',
+        'id_ukuran',
+        'jumlah',
+        'harga_satuan',
+        'subtotal',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'jumlah' => 'integer',
-            'harga_satuan' => 'float',
-            'subtotal' => 'float',
-        ];
-    }
+    protected $casts = [
+        'jumlah' => 'integer',
+        'harga_satuan' => 'decimal:2',
+        'subtotal' => 'decimal:2',
+    ];
 
-    public function pesanan()
+    public function pesanan(): BelongsTo
     {
         return $this->belongsTo(Pesanan::class, 'id_pesanan', 'id_pesanan');
     }
 
-    public function ukuran()
+    public function varianUkuran(): BelongsTo
     {
         return $this->belongsTo(UkuranStok::class, 'id_ukuran', 'id_ukuran');
+    }
+
+    /** Alias agar halaman pesanan memakai ->ukuran(). */
+    public function ukuran(): BelongsTo
+    {
+        return $this->varianUkuran();
+    }
+
+    public function ulasan(): HasOne
+    {
+        return $this->hasOne(Ulasan::class, 'id_detail', 'id_detail');
     }
 }

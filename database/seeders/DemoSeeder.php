@@ -65,19 +65,19 @@ class DemoSeeder extends Seeder
         $daftar = [
             [
                 'kategori' => 'Dress', 'nama' => 'Casual Midi Dress Linen', 'harga' => 279000,
-                'gambar' => 'images/figma/katalog/prod-midi-dress.png', 'rating' => 4.8,
+                'gambar' => 'prod-dress-main.webp', 'rating' => 4.8,
                 'deskripsi' => "Midi dress berbahan premium linen natural dengan siluet A-line yang anggun dan santai. Dilengkapi kerah V-neck yang feminin, kancing depan aktif, serta aksen ikat pinggang serasi yang memberikan siluet proporsional dan nyaman dikenakan sepanjang hari.\nMaterial: 100% Pure Organic Linen, breathable, sejuk, dan lembut di kulit.\nPotongan & Detail: Kerah V-neck, kancing depan bukaan penuh, saku samping fungsional, dan sabuk kain lepas-pasang.\nInstruksi Perawatan: Cuci dengan putaran lembut pada air dingin, jangan diperas kencang, jemur di tempat teduh, dan setrika dengan suhu sedang.",
                 'spesifikasi' => "Ukuran | Lingkar Dada | Lingkar Pinggang | Panjang Dress\nS | 92 cm | 72 - 76 cm | 114 cm\nM | 96 cm | 76 - 80 cm | 115 cm\nL | 100 cm | 80 - 84 cm | 116 cm\nXL | 106 cm | 86 - 90 cm | 117 cm\nXXL | 112 cm | 92 - 96 cm | 118 cm",
                 'varian' => [
-                    ['warna' => 'Sky Stripe', 'ukuran' => ['S', 'M', 'L', 'XL', 'XXL'], 'stok' => 12, 'habis' => ['XXL']],
-                    ['warna' => 'Choco Stripe', 'ukuran' => ['S', 'M', 'L', 'XL', 'XXL'], 'stok' => 12, 'habis' => ['XXL']],
-                    ['warna' => 'Deep Brown', 'ukuran' => ['S', 'M', 'L', 'XL', 'XXL'], 'stok' => 12, 'habis' => ['XXL']],
-                    ['warna' => 'Butter', 'ukuran' => ['S', 'M', 'L', 'XL', 'XXL'], 'stok' => 12, 'habis' => ['XXL']],
+                    ['warna' => 'Sky Stripe', 'ukuran' => ['S', 'M', 'L', 'XL', 'XXL'], 'stok' => 12, 'habis' => ['XXL'], 'gambar' => 'prod-dress-sky-stripe.webp'],
+                    ['warna' => 'Choco Stripe', 'ukuran' => ['S', 'M', 'L', 'XL', 'XXL'], 'stok' => 12, 'habis' => ['XXL'], 'gambar' => 'prod-dress-choco-stripe.webp'],
+                    ['warna' => 'Deep Brown', 'ukuran' => ['S', 'M', 'L', 'XL', 'XXL'], 'stok' => 12, 'habis' => ['XXL'], 'gambar' => 'prod-dress-deep-brown.webp'],
+                    ['warna' => 'Butter', 'ukuran' => ['S', 'M', 'L', 'XL', 'XXL'], 'stok' => 12, 'habis' => ['XXL'], 'gambar' => 'prod-dress-butter.webp'],
                 ],
             ],
             [
                 'kategori' => 'Atasan', 'nama' => 'Kaos Crewneck Katun Pria', 'harga' => 159000,
-                'gambar' => 'images/figma/katalog/prod-kaos-crewneck.png', 'rating' => 4.9,
+                'gambar' => 'prod-kaos.jpg', 'rating' => 4.9,
                 'spesifikasi' => "Ukuran | Lebar Dada | Panjang\nS | 50 cm | 66 cm\nM | 52 cm | 68 cm\nL | 55 cm | 70 cm\nXL | 58 cm | 72 cm\nXXL | 61 cm | 74 cm",
                 'varian' => [
                     ['warna' => 'Putih', 'ukuran' => ['S', 'M', 'L', 'XL', 'XXL'], 'stok' => 20],
@@ -86,7 +86,7 @@ class DemoSeeder extends Seeder
             ],
             [
                 'kategori' => 'Atasan', 'nama' => 'Kemeja Oxford Katun Pria', 'harga' => 249000,
-                'gambar' => 'images/figma/katalog/prod-kemeja-oxford.png', 'rating' => 4.7,
+                'gambar' => 'prod-kemeja-oxford.webp', 'rating' => 4.7,
                 'spesifikasi' => "Ukuran | Lebar Dada | Panjang | Panjang Lengan\nM | 54 cm | 70 cm | 60 cm\nL | 57 cm | 72 cm | 61 cm\nXL | 60 cm | 74 cm | 62 cm",
                 'varian' => [
                     ['warna' => 'Putih', 'ukuran' => ['M', 'L', 'XL'], 'stok' => 18],
@@ -95,31 +95,31 @@ class DemoSeeder extends Seeder
             ],
             [
                 'kategori' => 'Outer', 'nama' => 'Cardigan Rajut Oversize', 'harga' => 289000,
-                'gambar' => 'images/figma/katalog/prod-cardigan-oversize.png', 'rating' => 4.7,
+                'gambar' => 'prod-cardigan-oversize.webp', 'rating' => 4.7,
                 'spesifikasi' => "Ukuran | Lebar Dada | Panjang\nM | 58 cm | 64 cm\nL | 61 cm | 66 cm\nXL | 65 cm | 68 cm",
                 'varian' => [['warna' => 'Abu-abu', 'ukuran' => ['M', 'L', 'XL'], 'stok' => 0]],
             ],
             [
                 'kategori' => 'Atasan', 'nama' => 'Knit Turtleneck Hitam', 'harga' => 219000,
-                'gambar' => 'images/figma/katalog/prod-turtleneck.png', 'rating' => 4.8,
+                'gambar' => 'prod-knit-turtleneck.webp', 'rating' => 4.8,
                 'spesifikasi' => "Ukuran | Lebar Dada | Panjang\nM | 52 cm | 64 cm\nL | 55 cm | 66 cm\nXL | 58 cm | 68 cm",
                 'varian' => [['warna' => 'Hitam', 'ukuran' => ['M', 'L', 'XL'], 'stok' => 16]],
             ],
             [
                 'kategori' => 'Bawahan', 'nama' => 'Celana Smart Trousers Charcoal', 'harga' => 299000,
-                'gambar' => 'images/figma/katalog/prod-trousers.png', 'rating' => null,
+                'gambar' => 'prod-smart-trousers.webp', 'rating' => null,
                 'spesifikasi' => "Ukuran | Lingkar Pinggang | Panjang\n30 | 78 cm | 98 cm\n32 | 82 cm | 99 cm\n34 | 86 cm | 100 cm\n36 | 90 cm | 101 cm",
                 'varian' => [['warna' => 'Charcoal', 'ukuran' => ['30', '32', '34', '36'], 'stok' => 12]],
             ],
             [
                 'kategori' => 'Dress', 'nama' => 'Floral Summer Wrap Dress', 'harga' => 319000,
-                'gambar' => 'images/figma/katalog/prod-wrap-dress.png', 'rating' => 4.9,
+                'gambar' => 'prod-floral-dress.webp', 'rating' => 4.9,
                 'spesifikasi' => "Ukuran | Lingkar Dada | Panjang\nS | 84 cm | 105 cm\nM | 88 cm | 107 cm\nL | 92 cm | 109 cm",
                 'varian' => [['warna' => 'Floral', 'ukuran' => ['S', 'M', 'L'], 'stok' => 10]],
             ],
             [
                 'kategori' => 'Aksesori', 'nama' => 'Tas Kulit Selempang Minimalis', 'harga' => 349000,
-                'gambar' => 'images/figma/katalog/prod-tas-kulit.png', 'rating' => 4.8,
+                'gambar' => 'prod-tas-kulit.webp', 'rating' => 4.8,
                 'spesifikasi' => "Ukuran | Panjang | Lebar\nOne Size | 22 cm | 16 cm",
                 'varian' => [['warna' => 'Cokelat', 'ukuran' => ['One Size'], 'stok' => 8]],
             ],
@@ -156,6 +156,7 @@ class DemoSeeder extends Seeder
                         'id_produk' => $idProduk,
                         'ukuran' => $u,
                         'warna' => $v['warna'],
+                        'gambar' => $v['gambar'] ?? null,
                         'stok' => $stok,
                         'aktif' => $stok > 0,
                         'created_at' => now()->addSeconds($seq++),

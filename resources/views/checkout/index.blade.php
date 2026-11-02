@@ -2,7 +2,7 @@
 
 @section('title', 'Checkout')
 @section('active', 'keranjang')
-@section('main_class', 'site-main--catalog')
+@section('main-class', 'site-main--catalog')
 
 @section('content')
 <div class="checkout">
@@ -67,7 +67,7 @@
 
             @foreach ($items as $it)
                 <div class="checkout__item">
-                    <img src="{{ asset($it->ukuran->produk->gambar) }}" alt="{{ $it->ukuran->produk->nama_produk }}">
+                    <img src="{{ $it->ukuran->produk->gambar_url }}" alt="{{ $it->ukuran->produk->nama_produk }}">
                     <div class="checkout__item-info">
                         <span class="checkout__item-name">{{ $it->ukuran->produk->nama_produk }}</span>
                         <span class="checkout__item-var">{{ $it->ukuran->warna }} · {{ $it->ukuran->ukuran }} × {{ $it->jumlah }}</span>

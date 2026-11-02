@@ -4,101 +4,237 @@ namespace App\Http\Controllers;
 
 use App\Models\Keranjang;
 use App\Models\UkuranStok;
-use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class KeranjangController extends Controller
 {
-    /** Auth di-enforce lewat middleware pada route (web.php). */
-
+    /**
+     * Menampilkan isi keranjang belanja pengguna saat ini.
+     */
     public function index(): View
     {
-        $items = Keranjang::query()
-            ->with('ukuran.produk')
-            ->where('id_user', auth()->id())
-            ->orderByDesc('created_at')
+        $user = auth()->user();
+
+        $items = Keranjang::with(['varianUkuran.produk.kategori'])
+            ->where('id_user', $user->id_user)
+            ->latest()
             ->get();
 
-        foreach ($items as $it) {
-            $it->subtotal = $it->jumlah * (int) $it->ukuran->produk->harga;
+        // Hitung total harga item yang dipilih dan stok mencukupi
+        $totalHarga = 0;
+        $totalItemDipilih = 0;
+        $semuaDipilih = $items->isNotEmpty() && $items->every(fn ($item) => $item->dipilih);
+
+        foreach ($items as $item) {
+            $stokTersedia = (int) ($item->varianUkuran?->stok ?? 0);
+            $harga = (float) ($item->varianUkuran?->produk?->harga ?? 0);
+            $subtotal = $harga * $item->jumlah;
+
+            $item->subtotal = $subtotal;
+            $item->stok_cukup = $stokTersedia >= $item->jumlah;
+
+            if ($item->dipilih) {
+                $totalItemDipilih++;
+                $totalHarga += $subtotal;
+            }
         }
 
-        $total = $items->where('dipilih', true)->sum('subtotal');
-        $selectedCount = $items->where('dipilih', true)->sum('jumlah');
-
-        return view('keranjang.index', compact('items', 'total', 'selectedCount'));
+        return view('keranjang.index', compact('items', 'totalHarga', 'totalItemDipilih', 'semuaDipilih'));
     }
 
-    public function store(Request $request): RedirectResponse
+    /**
+     * Menambahkan produk ke keranjang belanja.
+     */
+    public function store(Request $request): RedirectResponse|JsonResponse
     {
-        $data = $request->validate([
-            'id_ukuran' => ['required', 'uuid'],
-            'jumlah' => ['required', 'integer', 'min:1', 'max:99'],
+        $request->validate([
+            'id_ukuran' => ['required', 'exists:ukuran_stok,id_ukuran'],
+            'jumlah' => ['nullable', 'integer', 'min:1'],
+        ], [
+            'id_ukuran.required' => 'Varian ukuran dan warna wajib dipilih.',
+            'id_ukuran.exists' => 'Varian yang dipilih tidak valid.',
+            'jumlah.min' => 'Jumlah minimal adalah 1.',
         ]);
 
-        $ukuran = UkuranStok::find($data['id_ukuran']);
+        $user = auth()->user();
+        $variant = UkuranStok::with('produk')->findOrFail($request->id_ukuran);
+        $jumlahDiminta = (int) ($request->input('jumlah', 1));
 
-        if (! $ukuran || ! $ukuran->aktif || $ukuran->stok <= 0) {
-            return back()->with('error', 'Varian ini sedang tidak tersedia.');
+        if ($variant->stok <= 0) {
+            if ($request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Stok produk ini sedang habis.'], 422);
+            }
+            return back()->with('error', 'Maaf, stok varian ini sedang habis.');
         }
 
-        $jumlah = min((int) $data['jumlah'], (int) $ukuran->stok);
+        // Cari apakah varian ini sudah ada di keranjang
+        $existing = Keranjang::where('id_user', $user->id_user)
+            ->where('id_ukuran', $variant->id_ukuran)
+            ->first();
 
-        $item = Keranjang::firstOrNew([
-            'id_user' => auth()->id(),
-            'id_ukuran' => $ukuran->id_ukuran,
-        ]);
+        if ($existing) {
+            $totalBaru = $existing->jumlah + $jumlahDiminta;
+            if ($totalBaru > $variant->stok) {
+                if ($request->wantsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Stok tidak cukup. Sisa stok tersedia: {$variant->stok} pcs.",
+                    ], 422);
+                }
+                return back()->with('error', "Stok tidak cukup. Sisa stok tersedia: {$variant->stok} pcs.");
+            }
+            $existing->jumlah = $totalBaru;
+            $existing->dipilih = true;
+            $existing->save();
+        } else {
+            if ($jumlahDiminta > $variant->stok) {
+                if ($request->wantsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Stok tidak cukup. Sisa stok tersedia: {$variant->stok} pcs.",
+                    ], 422);
+                }
+                return back()->with('error', "Stok tidak cukup. Sisa stok tersedia: {$variant->stok} pcs.");
+            }
 
-        $item->jumlah = min((int) $item->jumlah + $jumlah, (int) $ukuran->stok);
+            Keranjang::create([
+                'id_user' => $user->id_user,
+                'id_ukuran' => $variant->id_ukuran,
+                'jumlah' => $jumlahDiminta,
+                'dipilih' => true,
+            ]);
+        }
 
-        if ($request->input('mode') === 'beli') {
-            $item->dipilih = true;
+        // Jika tombol "Beli Sekarang" diklik
+        if ($request->boolean('beli_langsung')) {
+            return redirect()->route('keranjang.index');
+        }
+
+        if ($request->wantsJson()) {
+            $cartCount = Keranjang::where('id_user', $user->id_user)->count();
+            return response()->json([
+                'success' => true,
+                'message' => 'Produk berhasil ditambahkan ke keranjang!',
+                'cart_count' => $cartCount,
+            ]);
+        }
+
+        return redirect()->route('keranjang.index')->with('success', 'Produk berhasil ditambahkan ke keranjang!');
+    }
+
+    /**
+     * Memperbarui jumlah item atau status pilihan di keranjang.
+     */
+    public function update(Request $request, string $id): JsonResponse|RedirectResponse
+    {
+        $user = auth()->user();
+        $item = Keranjang::with('varianUkuran.produk')
+            ->where('id_user', $user->id_user)
+            ->where('id_keranjang', $id)
+            ->firstOrFail();
+
+        // 1. Update Jumlah
+        if ($request->has('jumlah')) {
+            $jumlah = max(1, (int) $request->jumlah);
+            $stokTersedia = (int) $item->varianUkuran->stok;
+
+            $item->jumlah = $jumlah;
             $item->save();
 
-            Keranjang::where('id_user', auth()->id())
-                ->where('id_keranjang', '!=', $item->id_keranjang)
-                ->update(['dipilih' => false]);
+            $stokCukup = $stokTersedia >= $jumlah;
 
-            return redirect()->route('checkout.index')
-                ->with('success', 'Produk ditambahkan. Lanjutkan ke checkout.');
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'stok_cukup' => $stokCukup,
+                    'message' => $stokCukup ? null : 'Stok tidak cukup',
+                    'subtotal' => 'Rp ' . number_format($item->jumlah * $item->varianUkuran->produk->harga, 0, ',', '.'),
+                    'totals' => $this->calculateTotals($user->id_user),
+                ]);
+            }
         }
 
-        $item->save();
+        // 2. Update Status Dipilih (Checkbox)
+        if ($request->has('dipilih')) {
+            $item->dipilih = $request->boolean('dipilih');
+            $item->save();
 
-        return back()->with('success', 'Produk ditambahkan ke keranjang.');
-    }
-
-    public function update(Request $request, string $keranjang): RedirectResponse
-    {
-        $item = Keranjang::where('id_user', auth()->id())->findOrFail($keranjang);
-
-        $data = $request->validate([
-            'jumlah' => ['required', 'integer', 'min:1', 'max:99'],
-        ]);
-
-        $stok = (int) ($item->ukuran->stok ?? 0);
-        $item->jumlah = min((int) $data['jumlah'], max($stok, 1));
-        $item->save();
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'totals' => $this->calculateTotals($user->id_user),
+                ]);
+            }
+        }
 
         return back();
     }
 
-    public function togglePilih(string $keranjang): RedirectResponse
+    /**
+     * Pilih / Batal Pilih semua item di keranjang.
+     */
+    public function toggleAll(Request $request): JsonResponse|RedirectResponse
     {
-        $item = Keranjang::where('id_user', auth()->id())->findOrFail($keranjang);
-        $item->dipilih = ! $item->dipilih;
-        $item->save();
+        $user = auth()->user();
+        $dipilih = $request->boolean('dipilih');
+
+        Keranjang::where('id_user', $user->id_user)->update(['dipilih' => $dipilih]);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'totals' => $this->calculateTotals($user->id_user),
+            ]);
+        }
 
         return back();
     }
 
-    public function destroy(string $keranjang): RedirectResponse
+    /**
+     * Menghapus item dari keranjang belanja.
+     */
+    public function destroy(string $id): RedirectResponse|JsonResponse
     {
-        Keranjang::where('id_user', auth()->id())
-            ->where('id_keranjang', $keranjang)
-            ->delete();
+        $user = auth()->user();
+        $item = Keranjang::where('id_user', $user->id_user)->where('id_keranjang', $id)->firstOrFail();
+        $item->delete();
 
-        return back()->with('success', 'Item dihapus dari keranjang.');
+        if (request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Produk berhasil dihapus dari keranjang.',
+                'totals' => $this->calculateTotals($user->id_user),
+            ]);
+        }
+
+        return redirect()->route('keranjang.index')->with('success', 'Produk berhasil dihapus dari keranjang.');
+    }
+
+    /**
+     * Helper menghitung total harga dan jumlah terpilih untuk AJAX response.
+     */
+    private function calculateTotals(string $userId): array
+    {
+        $items = Keranjang::with('varianUkuran.produk')->where('id_user', $userId)->get();
+        $total = 0;
+        $selectedCount = 0;
+
+        foreach ($items as $item) {
+            if ($item->dipilih) {
+                $selectedCount++;
+                $total += $item->jumlah * ($item->varianUkuran?->produk?->harga ?? 0);
+            }
+        }
+
+        return [
+            'total_formatted' => 'Rp ' . number_format($total, 0, ',', '.'),
+            'total_raw' => $total,
+            'selected_count' => $selectedCount,
+            'total_items' => $items->count(),
+            'all_selected' => $items->isNotEmpty() && $items->every(fn ($i) => $i->dipilih),
+        ];
     }
 }
