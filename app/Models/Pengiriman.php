@@ -12,14 +12,18 @@ class Pengiriman extends Model
     use HasFactory, HasUuids;
 
     protected $table = 'pengiriman';
+
     protected $primaryKey = 'id_pengiriman';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
         'id_pesanan',
         'no_resi',
         'tanggal_kirim',
+        'catatan',
     ];
 
     protected $casts = [

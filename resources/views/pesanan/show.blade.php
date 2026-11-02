@@ -54,8 +54,49 @@
 
                 <p class="pesanan__rek">Transfer ke rekening:<br><b>{{ $order->invoice->rekening_tujuan }}</b></p>
 
-                <button type="button" class="pesanan__upload" disabled>Upload Bukti Pembayaran</button>
-                <p class="pesanan__hint">Upload bukti tersedia pada tahap berikutnya (F-08).</p>
+                @php
+                    $bayarTerakhir = $order->pembayaran->sortByDesc('tanggal_upload')->first();
+                    $bisaUnggah = in_array($order->status, ['menunggu_pembayaran', 'pembayaran_ditolak'], true);
+                    $buktiAda = $bayarTerakhir && file_exists(public_path($bayarTerakhir->bukti_transfer));
+                @endphp
+
+                @if ($bayarTerakhir && $order->status === 'pembayaran_ditolak')
+                    <div class="pesanan__tolak">
+                        <b>Pembayaran ditolak.</b>
+                        <span>{{ $bayarTerakhir->alasan_tolak }}</span>
+                    </div>
+                @endif
+
+                @if ($bayarTerakhir && $order->status === 'menunggu_verifikasi')
+                    <div class="pesanan__verif">
+                        <b>Bukti sudah dikirim.</b>
+                        <span>Menunggu verifikasi penjual. Diunggah {{ $bayarTerakhir->tanggal_upload?->format('d M Y H:i') }}.</span>
+                    </div>
+
+                    @if ($buktiAda)
+                        <a href="{{ asset($bayarTerakhir->bukti_transfer) }}" target="_blank" rel="noopener" class="pesanan__bukti">
+                            <img src="{{ asset($bayarTerakhir->bukti_transfer) }}" alt="Bukti transfer">
+                        </a>
+                    @endif
+                @endif
+
+                @if ($bisaUnggah)
+                    <form method="POST" action="{{ route('pesanan.bayar', $order) }}" enctype="multipart/form-data" class="pesanan__form">
+                        @csrf
+                        <label class="pesanan__file">
+                            <input type="file" name="bukti" accept="image/jpeg,image/png" required>
+                            <span class="pesanan__file-teks">Pilih gambar bukti transfer (JPG/PNG, maks 10 MB)</span>
+                        </label>
+
+                        @error('bukti')
+                            <p class="pesanan__error">{{ $message }}</p>
+                        @enderror
+
+                        <button type="submit" class="pesanan__upload">Upload Bukti Pembayaran</button>
+                    </form>
+                @elseif (! $bayarTerakhir)
+                    <p class="pesanan__hint">Pesanan ini tidak lagi menerima bukti pembayaran.</p>
+                @endif
             </section>
         </aside>
     </div>

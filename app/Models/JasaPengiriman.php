@@ -13,8 +13,11 @@ class JasaPengiriman extends Model
     use HasFactory, HasUuids;
 
     protected $table = 'jasa_pengiriman';
+
     protected $primaryKey = 'id_jasa';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -30,5 +33,20 @@ class JasaPengiriman extends Model
     public function tarif(): HasMany
     {
         return $this->hasMany(TarifPengiriman::class, 'id_jasa', 'id_jasa');
+    }
+
+    /**
+     * Label jumlah pulau: "6 Pulau Terdaftar" atau "1 Pulau Terdaftar (Jawa)".
+     */
+    public function labelPulau(): string
+    {
+        $jumlah = $this->tarif_count ?? $this->tarif->count();
+        $label = $jumlah.' Pulau Terdaftar';
+
+        if ($jumlah === 1 && $this->tarif->isNotEmpty()) {
+            $label .= ' ('.$this->tarif->first()->pulau_tujuan.')';
+        }
+
+        return $label;
     }
 }
