@@ -92,7 +92,18 @@ Sekali jalan, ini membuat seluruh tabel (produk, kategori, pesanan, jasa pengiri
 tarif, dll) dan mengisi data dummy: **8 produk, 36 varian, 2 jasa pengiriman,
 12 tarif, 38 provinsi, 7 kategori**, plus 2 akun demo.
 
-### 8. Jalankan
+### 8. Link storage (wajib — agar bukti pembayaran tampil)
+
+```bash
+php artisan storage:link
+```
+
+Bukti transfer yang diunggah pelanggan tersimpan di `storage/app/public/pembayaran/`
+dan disajikan lewat URL `/storage/`. Perintah ini membuat symlink
+`public/storage` → `storage/app/public` supaya gambar bukti bisa dilihat pelanggan
+maupun penjual. Kalau langkah ini dilewati, bukti transfer akan 404.
+
+### 9. Jalankan
 
 Buka:
 
