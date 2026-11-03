@@ -18,6 +18,10 @@
             <div class="alert alert--success alert--floating">{{ session('success') }}</div>
         @endif
 
+        @if (session('error'))
+            <div class="alert alert--error alert--floating">{{ session('error') }}</div>
+        @endif
+
         @yield('content')
     </main>
 

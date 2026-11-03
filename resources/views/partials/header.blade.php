@@ -76,7 +76,7 @@
                             <span class="user-dropdown__role">{{ ucfirst(auth()->user()->role) }}</span>
                         </div>
                         @if (auth()->user()->isPenjual())
-                            <a href="{{ route('admin.home') }}">Halaman Penjual</a>
+                            <a href="{{ route('admin.dashboard') }}">Halaman Penjual</a>
                         @endif
                         <a href="{{ route('keranjang.index') }}">Keranjang Belanja</a>
                         <form method="POST" action="{{ route('logout') }}">

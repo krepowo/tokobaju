@@ -46,7 +46,7 @@ class AuthController extends Controller
         $request->session()->regenerate();
 
         return redirect()->intended(
-            $user->isPenjual() ? route('admin.home') : route('home')
+            $user->isPenjual() ? route('admin.dashboard') : route('home')
         );
     }
 
@@ -81,7 +81,7 @@ class AuthController extends Controller
         $phone = null;
         if (! empty($data['phone'])) {
             $phone = User::normalizePhone($data['phone']);
-            if ($phone && User::where('no_telepon', $phone)->orWhere('phone', $phone)->exists()) {
+            if ($phone && User::where('no_telepon', $phone)->exists()) {
                 throw ValidationException::withMessages([
                     'phone' => 'Nomor telepon ini sudah terdaftar.',
                 ]);
@@ -90,10 +90,8 @@ class AuthController extends Controller
 
         $user = User::create([
             'nama' => $data['name'],
-            'name' => $data['name'],
             'email' => $email,
             'no_telepon' => $phone,
-            'phone' => $phone,
             'password' => $data['password'],
             'role' => User::ROLE_PELANGGAN,
         ]);
@@ -101,7 +99,7 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect()->route('home')->with('success', 'Registrasi berhasil. Selamat datang, '.$user->name.'.');
+        return redirect()->route('home')->with('success', 'Registrasi berhasil. Selamat datang, '.$user->nama.'.');
     }
 
     public function logout(Request $request): RedirectResponse
