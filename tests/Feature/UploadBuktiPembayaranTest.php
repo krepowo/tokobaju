@@ -575,4 +575,99 @@ class UploadBuktiPembayaranTest extends TestCase
         $resPdf->assertHeader('content-type', 'application/pdf');
         $this->assertStringContainsString('invoice-' . $pesanan->invoice->no_invoice . '.pdf', $resPdf->headers->get('content-disposition'));
     }
+
+    public function test_kedua_command_kedaluwarsa_berurutan_tidak_mengembalikan_stok_dobel(): void
+    {
+        $this->assertEquals(10, $this->ukuranStok->stok);
+
+        // Kasus 1: Jalankan command kita (pesanan:batalkan-kedaluwarsa) dulu, lalu command upstream (pembayaran:kedaluwarsa)
+        $pesanan1 = $this->createPesanan([
+            'status' => 'menunggu_pembayaran',
+            'batas_bayar' => now()->subHour(),
+        ]);
+        $pesanan1->detailPesanan()->first()->update(['jumlah' => 2]);
+
+        $this->artisan('pesanan:batalkan-kedaluwarsa')
+            ->expectsOutputToContain('Berhasil memproses pembatalan: 1 pesanan kedaluwarsa')
+            ->assertExitCode(0);
+
+        $this->ukuranStok->refresh();
+        $this->assertEquals(12, $this->ukuranStok->stok);
+
+        // Jalankan command upstream: tidak boleh mengembalikan stok lagi
+        $this->artisan('pembayaran:kedaluwarsa')->assertExitCode(0);
+        $this->ukuranStok->refresh();
+        $this->assertEquals(12, $this->ukuranStok->stok);
+
+        // Kasus 2: Sebaliknya, jalankan command upstream dulu, lalu command kita
+        $pesanan2 = $this->createPesanan([
+            'status' => 'menunggu_pembayaran',
+            'batas_bayar' => now()->subHour(),
+        ]);
+        $pesanan2->detailPesanan()->first()->update(['jumlah' => 3]);
+
+        $this->artisan('pembayaran:kedaluwarsa')->assertExitCode(0);
+        $this->ukuranStok->refresh();
+        $this->assertEquals(15, $this->ukuranStok->stok);
+
+        // Jalankan command kita: tidak boleh mengembalikan stok lagi
+        $this->artisan('pesanan:batalkan-kedaluwarsa')
+            ->expectsOutputToContain('Berhasil memproses pembatalan: 0 pesanan kedaluwarsa')
+            ->assertExitCode(0);
+
+        $this->ukuranStok->refresh();
+        $this->assertEquals(15, $this->ukuranStok->stok);
+    }
+
+    public function test_admin_verifikasi_menampilkan_bukti_dari_kedua_jalur_upload(): void
+    {
+        $penjual = User::where('role', 'penjual')->first();
+        $this->assertNotNull($penjual);
+
+        // 1. Jalur storage/pembayaran (Jalur pelanggan modal / Storage::disk('public'))
+        Storage::fake('public');
+        Storage::disk('public')->put('pembayaran/bukti-storage.jpg', 'dummy-image-content');
+
+        $pesananA = $this->createPesanan(['status' => 'menunggu_verifikasi']);
+        $bayarA = Pembayaran::create([
+            'id_pesanan' => $pesananA->id_pesanan,
+            'bukti_transfer' => 'pembayaran/bukti-storage.jpg',
+            'tanggal_upload' => now(),
+            'status_verifikasi' => 'menunggu',
+        ]);
+
+        $resA = $this->actingAs($penjual)->get(route('admin.verifikasi.show', $bayarA));
+        $resA->assertOk();
+        $resA->assertSee('storage/pembayaran/bukti-storage.jpg');
+        $resA->assertSee('Perbesar');
+        $resA->assertDontSee('Bukti transfer belum tersedia');
+
+        // 2. Jalur images/uploads (Jalur upstream)
+        $publicDir = public_path('images/uploads');
+        if (! file_exists($publicDir)) {
+            mkdir($publicDir, 0777, true);
+        }
+        $publicFile = $publicDir . '/bukti-public-test.jpg';
+        file_put_contents($publicFile, 'dummy-public-content');
+
+        try {
+            $pesananB = $this->createPesanan(['status' => 'menunggu_verifikasi']);
+            $bayarB = Pembayaran::create([
+                'id_pesanan' => $pesananB->id_pesanan,
+                'bukti_transfer' => 'images/uploads/bukti-public-test.jpg',
+                'tanggal_upload' => now(),
+                'status_verifikasi' => 'menunggu',
+            ]);
+
+            $resB = $this->actingAs($penjual)->get(route('admin.verifikasi.show', $bayarB));
+            $resB->assertOk();
+            $resB->assertSee('images/uploads/bukti-public-test.jpg');
+            $resB->assertSee('Perbesar');
+            $resB->assertDontSee('Bukti transfer belum tersedia');
+        } finally {
+            if (file_exists($publicFile)) {
+                unlink($publicFile);
+            }
+        }
+    }
 }

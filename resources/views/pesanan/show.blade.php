@@ -624,7 +624,7 @@
             <div class="lightbox-modal__overlay" id="lightboxOverlay"></div>
             <div class="lightbox-modal__container">
                 <button type="button" class="lightbox-modal__close" id="btnTutupLightbox" aria-label="Tutup pratinjau">&times;</button>
-                <img src="{{ asset('storage/' . $pembayaran->bukti_transfer) }}" alt="Bukti Transfer Ukuran Penuh" class="lightbox-modal__img">
+                <img src="{{ asset(str_starts_with($pembayaran->bukti_transfer, 'images/') ? $pembayaran->bukti_transfer : 'storage/' . $pembayaran->bukti_transfer) }}" alt="Bukti Transfer Ukuran Penuh" class="lightbox-modal__img">
                 <div class="lightbox-modal__caption">
                     Bukti Transfer &middot; Diunggah {{ $pembayaran->tanggal_upload?->format('d F Y, H:i') }} WIB
                 </div>

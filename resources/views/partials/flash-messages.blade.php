@@ -14,7 +14,7 @@
     @endif
 
     @if (session('error'))
-        <div class="alert alert--danger alert--floating js-auto-alert" data-timeout="7000" role="alert">
+        <div class="alert alert--danger alert--error alert--floating js-auto-alert" data-timeout="7000" role="alert">
             <div class="alert__content">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="alert__icon" aria-hidden="true">
                     <circle cx="12" cy="12" r="10"></circle>

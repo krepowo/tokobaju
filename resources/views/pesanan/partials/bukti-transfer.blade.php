@@ -21,7 +21,7 @@
 
         <div class="pesanan-proof-card__body">
             <div class="pesanan-proof-card__thumb-wrap js-open-lightbox" role="button" tabindex="0" title="Klik untuk memperbesar bukti transfer">
-                <img src="{{ asset('storage/' . $pembayaran->bukti_transfer) }}" alt="Bukti Transfer" class="pesanan-proof-card__thumb">
+                <img src="{{ asset(str_starts_with($pembayaran->bukti_transfer, 'images/') ? $pembayaran->bukti_transfer : 'storage/' . $pembayaran->bukti_transfer) }}" alt="Bukti Transfer" class="pesanan-proof-card__thumb">
                 <div class="pesanan-proof-card__overlay-btn">
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                 </div>

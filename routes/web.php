@@ -1,5 +1,13 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\JasaPengirimanController;
+use App\Http\Controllers\Admin\KategoriController;
+use App\Http\Controllers\Admin\PembayaranController as PembayaranAdminController;
+use App\Http\Controllers\Admin\PengirimanController;
+use App\Http\Controllers\Admin\PesananController as PesananAdminController;
+use App\Http\Controllers\Admin\ProdukController;
+use App\Http\Controllers\Admin\StokController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\KatalogController;
@@ -16,7 +24,7 @@ Route::get('/', function () {
     try {
         $kategori = Kategori::all();
         $produkUnggulan = Produk::with('kategori')->take(4)->get();
-    } catch (\Throwable $e) {
+    } catch (Throwable $e) {
         $kategori = collect([]);
         $produkUnggulan = collect([]);
     }
@@ -47,6 +55,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/pesanan/{pesanan}/invoice', [PesananController::class, 'invoice'])->name('pesanan.invoice');
     Route::get('/pesanan/{pesanan}/invoice/unduh', [PesananController::class, 'unduhInvoice'])->name('pesanan.invoice.unduh');
     Route::post('/pesanan/{pesanan}/upload-bukti', [PesananController::class, 'uploadBukti'])->name('pesanan.upload-bukti');
+    Route::post('/pesanan/{pesanan}/bayar', [PesananController::class, 'uploadBukti'])->name('pesanan.bayar');
     Route::post('/pesanan/{pesanan}/konfirmasi-terima', [PesananController::class, 'konfirmasiTerima'])->name('pesanan.konfirmasi-terima');
 });
 
@@ -70,8 +79,47 @@ Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])
     ->name('logout');
 
 // =========================================================================
-// 5. HALAMAN PENJUAL (Role: Penjual)
+// 5. AREA PENJUAL (Role: Penjual)
 // =========================================================================
-Route::get('/admin', fn () => view('admin.home'))
-    ->middleware(['auth', 'role:penjual'])
-    ->name('admin.home');
+Route::middleware(['auth', 'role:penjual'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+        // Kelola Produk, Kategori & Pengiriman
+        Route::get('/produk', [ProdukController::class, 'index'])->name('produk.index');
+        Route::post('/produk', [ProdukController::class, 'store'])->name('produk.store');
+        Route::put('/produk/{produk}', [ProdukController::class, 'update'])->name('produk.update');
+        Route::delete('/produk/{produk}', [ProdukController::class, 'destroy'])->name('produk.destroy');
+
+        Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
+        Route::post('/kategori', [KategoriController::class, 'store'])->name('kategori.store');
+        Route::put('/kategori/{kategori}', [KategoriController::class, 'update'])->name('kategori.update');
+        Route::delete('/kategori/{kategori}', [KategoriController::class, 'destroy'])->name('kategori.destroy');
+
+        Route::get('/jasa', [JasaPengirimanController::class, 'index'])->name('jasa.index');
+        Route::post('/jasa', [JasaPengirimanController::class, 'store'])->name('jasa.store');
+        Route::put('/jasa/{jasa}', [JasaPengirimanController::class, 'update'])->name('jasa.update');
+        Route::delete('/jasa/{jasa}', [JasaPengirimanController::class, 'destroy'])->name('jasa.destroy');
+        Route::put('/jasa/{jasa}/tarif', [JasaPengirimanController::class, 'updateTarif'])->name('jasa.tarif.update');
+
+        // Kelola Stok, Ukuran & Warna
+        Route::get('/stok', [StokController::class, 'index'])->name('stok.index');
+        Route::put('/stok/{produk}', [StokController::class, 'update'])->name('stok.update');
+
+        // Pesanan & Invoice
+        Route::get('/pesanan', [PesananAdminController::class, 'index'])->name('pesanan.index');
+        Route::get('/pesanan/cetak', [PesananAdminController::class, 'cetak'])->name('pesanan.cetak');
+        Route::get('/pesanan/{pesanan}', [PesananAdminController::class, 'show'])->name('pesanan.show');
+
+        // Proses Pengiriman
+        Route::get('/pengiriman', [PengirimanController::class, 'index'])->name('pengiriman.index');
+        Route::put('/pengiriman/{pesanan}', [PengirimanController::class, 'update'])->name('pengiriman.update');
+
+        // Verifikasi Bayar
+        Route::get('/verifikasi', [PembayaranAdminController::class, 'index'])->name('verifikasi.index');
+        Route::get('/verifikasi/{pembayaran}', [PembayaranAdminController::class, 'show'])->name('verifikasi.show');
+        Route::post('/verifikasi/{pembayaran}/setujui', [PembayaranAdminController::class, 'setujui'])->name('verifikasi.setujui');
+        Route::post('/verifikasi/{pembayaran}/tolak', [PembayaranAdminController::class, 'tolak'])->name('verifikasi.tolak');
+    });

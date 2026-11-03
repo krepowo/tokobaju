@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Pembayaran;
 use App\Models\Pesanan;
+use App\Support\Stok;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 
 class PesananController extends Controller
 {
@@ -60,32 +62,80 @@ class PesananController extends Controller
         return view('pesanan.show', ['order' => $order]);
     }
 
+    /**
+     * Unggah bukti transfer (F-08).
+     * Status pesanan menjadi `menunggu_verifikasi` sehingga masuk antrean penjual.
+     */
     public function uploadBukti(Request $request, string $pesanan): RedirectResponse
     {
-        $order = Pesanan::findOrFail($pesanan);
+        if ($request->routeIs('pesanan.bayar')) {
+            $order = Pesanan::query()
+                ->with(['detailPesanan', 'pembayaran'])
+                ->where('id_user', auth()->id())
+                ->findOrFail($pesanan);
+        } else {
+            $order = Pesanan::query()
+                ->with(['detailPesanan', 'pembayaran'])
+                ->findOrFail($pesanan);
 
-        if ($order->id_user !== auth()->id()) {
-            abort(403);
+            if ($order->id_user !== auth()->id()) {
+                abort(403);
+            }
         }
 
         $statusBoleh = in_array($order->status, ['menunggu_pembayaran', 'pembayaran_ditolak'], true);
         $batasLewat = $order->batas_bayar && $order->batas_bayar->isPast();
 
         if (! $statusBoleh || $batasLewat) {
-            return redirect()->route('pesanan.show', $order->id_pesanan)
+            return redirect()
+                ->route('pesanan.show', $order->id_pesanan)
                 ->with('error', 'Pesanan tidak dapat dibayar lagi');
         }
 
-        $request->validate([
-            'bukti_transfer' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:10240'],
-        ], [
-            'bukti_transfer.required' => 'Bukti pembayaran wajib diunggah.',
-            'bukti_transfer.image' => 'File bukti pembayaran harus berupa gambar.',
-            'bukti_transfer.mimes' => 'Format gambar harus JPG, JPEG, atau PNG.',
-            'bukti_transfer.max' => 'Ukuran file gambar maksimal 10 MB.',
-        ]);
+        $fileKey = $request->hasFile('bukti') ? 'bukti' : 'bukti_transfer';
 
-        $path = $request->file('bukti_transfer')->store('pembayaran', 'public');
+        if ($fileKey === 'bukti') {
+            $request->validate([
+                'bukti' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:10240'],
+            ], [
+                'bukti.required' => 'Pilih file bukti transfer terlebih dahulu.',
+                'bukti.image' => 'File bukti transfer harus berupa gambar.',
+                'bukti.mimes' => 'Format bukti transfer harus JPG, JPEG, atau PNG.',
+                'bukti.max' => 'Ukuran bukti transfer maksimal 10 MB.',
+            ]);
+
+            // Unggah ulang setelah ditolak: stok sudah dikembalikan, jadi dipesan lagi.
+            if ($order->status === 'pembayaran_ditolak' && ! Stok::pesanUlang($order)) {
+                return redirect()
+                    ->route('pesanan.show', $order)
+                    ->with('error', 'Stok untuk salah satu varian pada pesanan ini sudah tidak tersedia, sehingga pembayaran tidak dapat dilanjutkan.');
+            }
+
+            $folder = public_path('images/uploads');
+            File::ensureDirectoryExists($folder);
+
+            $namaBerkas = $request->file('bukti')->hashName();
+            $request->file('bukti')->move($folder, $namaBerkas);
+            $path = 'images/uploads/' . $namaBerkas;
+        } else {
+            $request->validate([
+                'bukti_transfer' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:10240'],
+            ], [
+                'bukti_transfer.required' => 'Bukti pembayaran wajib diunggah.',
+                'bukti_transfer.image' => 'File bukti pembayaran harus berupa gambar.',
+                'bukti_transfer.mimes' => 'Format gambar harus JPG, JPEG, atau PNG.',
+                'bukti_transfer.max' => 'Ukuran file gambar maksimal 10 MB.',
+            ]);
+
+            // Unggah ulang setelah ditolak: stok sudah dikembalikan, jadi dipesan lagi.
+            if ($order->status === 'pembayaran_ditolak' && ! Stok::pesanUlang($order)) {
+                return redirect()
+                    ->route('pesanan.show', $order)
+                    ->with('error', 'Stok untuk salah satu varian pada pesanan ini sudah tidak tersedia, sehingga pembayaran tidak dapat dilanjutkan.');
+            }
+
+            $path = $request->file('bukti_transfer')->store('pembayaran', 'public');
+        }
 
         DB::transaction(function () use ($order, $path) {
             Pembayaran::create([

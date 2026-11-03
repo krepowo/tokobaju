@@ -70,6 +70,13 @@ class CheckoutController extends Controller
 
         [$pulau, $ongkir] = $this->ongkirUntuk($data['id_jasa'], $data['provinsi']);
 
+        // Jangan pernah memakai ongkir 0 diam-diam kalau tarif pulau belum diatur.
+        if ($ongkir === null) {
+            return back()->withInput()->withErrors([
+                'id_jasa' => 'Ongkos kirim ke pulau '.$pulau.' belum tersedia untuk jasa yang dipilih. Silakan pilih jasa pengiriman lain.',
+            ]);
+        }
+
         $subtotal = $items->sum(fn ($it) => $it->jumlah * (int) $it->ukuran->produk->harga);
         $total = $subtotal + $ongkir;
 
@@ -166,7 +173,7 @@ class CheckoutController extends Controller
     }
 
     /**
-     * @return array{0: string, 1: int} [pulau, ongkir]
+     * @return array{0: string, 1: int|null} [pulau, ongkir] — ongkir null bila tarif pulau belum diatur
      */
     private function ongkirUntuk(string $idJasa, string $namaProvinsi): array
     {
@@ -178,6 +185,6 @@ class CheckoutController extends Controller
             ->where('pulau_tujuan', $pulau)
             ->value('tarif');
 
-        return [$pulau, (int) ($tarif ?? 0)];
+        return [$pulau, $tarif === null ? null : (int) $tarif];
     }
 }
