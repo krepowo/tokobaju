@@ -47,6 +47,12 @@ class DetailPesanan extends Model
         return $this->varianUkuran();
     }
 
+    /** Alias agar invoice memakai ->ukuranStok(). */
+    public function ukuranStok(): BelongsTo
+    {
+        return $this->varianUkuran();
+    }
+
     public function ulasan(): HasOne
     {
         return $this->hasOne(Ulasan::class, 'id_detail', 'id_detail');

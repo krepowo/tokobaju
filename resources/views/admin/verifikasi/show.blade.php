@@ -12,7 +12,21 @@
         $subtotal = $pesanan->detailPesanan->sum('subtotal');
 
         $bukti = $pembayaran->bukti_transfer;
-        $adaBukti = $bukti && file_exists(public_path($bukti));
+        $urlBukti = null;
+        $adaBukti = false;
+
+        if ($bukti) {
+            if (str_starts_with($bukti, 'images/')) {
+                $adaBukti = file_exists(public_path($bukti));
+                $urlBukti = asset($bukti);
+            } elseif (str_starts_with($bukti, 'storage/')) {
+                $adaBukti = file_exists(public_path($bukti)) || \Illuminate\Support\Facades\Storage::disk('public')->exists(substr($bukti, 8));
+                $urlBukti = asset($bukti);
+            } else {
+                $adaBukti = \Illuminate\Support\Facades\Storage::disk('public')->exists($bukti) || file_exists(public_path('storage/' . $bukti)) || file_exists(public_path($bukti));
+                $urlBukti = asset('storage/' . $bukti);
+            }
+        }
         $sudahDiproses = $pembayaran->status_verifikasi !== 'menunggu';
 
         $labelStatus = [
@@ -39,7 +53,7 @@
                 <div class="panel__head">
                     <h2>Pratinjau Bukti Bayar</h2>
                     @if ($adaBukti)
-                        <a href="{{ asset($bukti) }}" target="_blank" rel="noopener" class="link-detail">
+                        <a href="{{ $urlBukti }}" target="_blank" rel="noopener" class="link-detail">
                             <svg viewBox="0 0 24 24"><path d="M14 4h6v6"/><path d="M20 4 10.5 13.5"/><path d="M18.5 14.5V20H4V5.5h5.5"/></svg>
                             Perbesar
                         </a>
@@ -47,8 +61,8 @@
                 </div>
 
                 @if ($adaBukti)
-                    <a href="{{ asset($bukti) }}" target="_blank" rel="noopener" class="verif-bukti__frame">
-                        <img src="{{ asset($bukti) }}" alt="Bukti transfer {{ $invoice?->no_invoice }}">
+                    <a href="{{ $urlBukti }}" target="_blank" rel="noopener" class="verif-bukti__frame">
+                        <img src="{{ $urlBukti }}" alt="Bukti transfer {{ $invoice?->no_invoice }}">
                     </a>
                 @else
                     <div class="verif-bukti__kosong">

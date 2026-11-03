@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pembayaran;
 use App\Models\Pesanan;
 use App\Support\Stok;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -35,7 +37,7 @@ class PesananController extends Controller
         $active = (string) $request->query('status', 'semua');
 
         $orders = Pesanan::query()
-            ->with(['invoice', 'jasa', 'detailPesanan.ukuran.produk', 'pengiriman', 'pembayaran'])
+            ->with(['invoice', 'jasa', 'detailPesanan.ukuran.produk', 'pengiriman', 'pembayaran', 'pembayaranTerakhir'])
             ->where('id_user', auth()->id())
             ->when($active !== 'semua' && isset($statusList[$active]), fn ($q) => $q->where('status', $active))
             ->orderByDesc('tanggal_pesanan')
@@ -53,7 +55,7 @@ class PesananController extends Controller
     public function show(string $pesanan): View
     {
         $order = Pesanan::query()
-            ->with(['jasa', 'invoice', 'detailPesanan.ukuran.produk', 'pengiriman', 'pembayaran'])
+            ->with(['user', 'jasa', 'invoice', 'detailPesanan.ukuran.produk', 'pengiriman', 'pembayaran', 'pembayaranTerakhir'])
             ->where('id_user', auth()->id())
             ->findOrFail($pesanan);
 
@@ -66,51 +68,146 @@ class PesananController extends Controller
      */
     public function uploadBukti(Request $request, string $pesanan): RedirectResponse
     {
-        $order = Pesanan::query()
-            ->with(['detailPesanan', 'pembayaran'])
-            ->where('id_user', auth()->id())
-            ->findOrFail($pesanan);
+        if ($request->routeIs('pesanan.bayar')) {
+            $order = Pesanan::query()
+                ->with(['detailPesanan', 'pembayaran'])
+                ->where('id_user', auth()->id())
+                ->findOrFail($pesanan);
+        } else {
+            $order = Pesanan::query()
+                ->with(['detailPesanan', 'pembayaran'])
+                ->findOrFail($pesanan);
 
-        if (! in_array($order->status, ['menunggu_pembayaran', 'pembayaran_ditolak'], true)) {
-            return redirect()
-                ->route('pesanan.show', $order)
-                ->with('error', 'Bukti pembayaran tidak bisa diunggah untuk pesanan berstatus '.$order->statusLabel().'.');
+            if ($order->id_user !== auth()->id()) {
+                abort(403);
+            }
         }
 
-        $request->validate([
-            'bukti' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:10240'],
-        ], [
-            'bukti.required' => 'Pilih file bukti transfer terlebih dahulu.',
-            'bukti.image' => 'File bukti transfer harus berupa gambar.',
-            'bukti.mimes' => 'Format bukti transfer harus JPG, JPEG, atau PNG.',
-            'bukti.max' => 'Ukuran bukti transfer maksimal 10 MB.',
-        ]);
+        $statusBoleh = in_array($order->status, ['menunggu_pembayaran', 'pembayaran_ditolak'], true);
+        $batasLewat = $order->batas_bayar && $order->batas_bayar->isPast();
 
-        // Unggah ulang setelah ditolak: stok sudah dikembalikan, jadi dipesan lagi.
-        if ($order->status === 'pembayaran_ditolak' && ! Stok::pesanUlang($order)) {
+        if (! $statusBoleh || $batasLewat) {
             return redirect()
-                ->route('pesanan.show', $order)
-                ->with('error', 'Stok untuk salah satu varian pada pesanan ini sudah tidak tersedia, sehingga pembayaran tidak dapat dilanjutkan.');
+                ->route('pesanan.show', $order->id_pesanan)
+                ->with('error', 'Pesanan tidak dapat dibayar lagi');
         }
 
-        $folder = public_path('images/uploads');
-        File::ensureDirectoryExists($folder);
+        $fileKey = $request->hasFile('bukti') ? 'bukti' : 'bukti_transfer';
 
-        $namaBerkas = $request->file('bukti')->hashName();
-        $request->file('bukti')->move($folder, $namaBerkas);
+        if ($fileKey === 'bukti') {
+            $request->validate([
+                'bukti' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:10240'],
+            ], [
+                'bukti.required' => 'Pilih file bukti transfer terlebih dahulu.',
+                'bukti.image' => 'File bukti transfer harus berupa gambar.',
+                'bukti.mimes' => 'Format bukti transfer harus JPG, JPEG, atau PNG.',
+                'bukti.max' => 'Ukuran bukti transfer maksimal 10 MB.',
+            ]);
 
-        DB::transaction(function () use ($order, $namaBerkas) {
-            $order->pembayaran()->create([
-                'bukti_transfer' => 'images/uploads/'.$namaBerkas,
+            // Unggah ulang setelah ditolak: stok sudah dikembalikan, jadi dipesan lagi.
+            if ($order->status === 'pembayaran_ditolak' && ! Stok::pesanUlang($order)) {
+                return redirect()
+                    ->route('pesanan.show', $order)
+                    ->with('error', 'Stok untuk salah satu varian pada pesanan ini sudah tidak tersedia, sehingga pembayaran tidak dapat dilanjutkan.');
+            }
+
+            $folder = public_path('images/uploads');
+            File::ensureDirectoryExists($folder);
+
+            $namaBerkas = $request->file('bukti')->hashName();
+            $request->file('bukti')->move($folder, $namaBerkas);
+            $path = 'images/uploads/' . $namaBerkas;
+        } else {
+            $request->validate([
+                'bukti_transfer' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:10240'],
+            ], [
+                'bukti_transfer.required' => 'Bukti pembayaran wajib diunggah.',
+                'bukti_transfer.image' => 'File bukti pembayaran harus berupa gambar.',
+                'bukti_transfer.mimes' => 'Format gambar harus JPG, JPEG, atau PNG.',
+                'bukti_transfer.max' => 'Ukuran file gambar maksimal 10 MB.',
+            ]);
+
+            // Unggah ulang setelah ditolak: stok sudah dikembalikan, jadi dipesan lagi.
+            if ($order->status === 'pembayaran_ditolak' && ! Stok::pesanUlang($order)) {
+                return redirect()
+                    ->route('pesanan.show', $order)
+                    ->with('error', 'Stok untuk salah satu varian pada pesanan ini sudah tidak tersedia, sehingga pembayaran tidak dapat dilanjutkan.');
+            }
+
+            $path = $request->file('bukti_transfer')->store('pembayaran', 'public');
+        }
+
+        DB::transaction(function () use ($order, $path) {
+            Pembayaran::create([
+                'id_pesanan' => $order->id_pesanan,
+                'bukti_transfer' => $path,
                 'tanggal_upload' => now(),
                 'status_verifikasi' => 'menunggu',
             ]);
 
-            $order->update(['status' => 'menunggu_verifikasi']);
+            $order->update([
+                'status' => 'menunggu_verifikasi',
+            ]);
         });
 
-        return redirect()
-            ->route('pesanan.show', $order)
-            ->with('success', 'Bukti pembayaran terkirim. Pesanan menunggu verifikasi penjual.');
+        return redirect()->route('pesanan.show', $order->id_pesanan)
+            ->with('success', 'Bukti pembayaran berhasil diunggah');
+    }
+
+    public function konfirmasiTerima(Request $request, string $pesanan): RedirectResponse
+    {
+        $order = Pesanan::with('pengiriman')->findOrFail($pesanan);
+
+        if ($order->id_user !== auth()->id()) {
+            abort(403);
+        }
+
+        if ($order->status !== 'dikirim') {
+            return redirect()->route('pesanan.show', $order->id_pesanan)
+                ->with('error', 'Pesanan belum dapat dikonfirmasi');
+        }
+
+        DB::transaction(function () use ($order) {
+            $order->update([
+                'status' => 'selesai',
+            ]);
+
+            if ($order->pengiriman) {
+                $order->pengiriman->update([
+                    'tanggal_diterima' => now(),
+                ]);
+            }
+        });
+
+        return redirect()->route('pesanan.show', $order->id_pesanan)
+            ->with('success', 'Pesanan telah dikonfirmasi diterima. Terima kasih sudah berbelanja di Gavin Fashion Store!');
+    }
+
+    private function muatInvoice(string $id): Pesanan
+    {
+        $pesanan = Pesanan::with([
+            'user', 'invoice', 'jasaPengiriman', 'pengiriman',
+            'detailPesanan.ukuranStok.produk',
+        ])->findOrFail($id);
+
+        abort_if($pesanan->id_user !== auth()->id(), 403);
+        abort_if($pesanan->status === 'dibatalkan', 404);
+
+        return $pesanan;
+    }
+
+    public function invoice(string $pesanan): View
+    {
+        $order = $this->muatInvoice($pesanan);
+        return view('pesanan.invoice', ['pesanan' => $order, 'mode' => 'web']);
+    }
+
+    public function unduhInvoice(string $pesanan)
+    {
+        $order = $this->muatInvoice($pesanan);
+
+        return Pdf::loadView('pesanan.invoice', ['pesanan' => $order, 'mode' => 'pdf'])
+            ->setPaper('a4')
+            ->download('invoice-' . $order->invoice->no_invoice . '.pdf');
     }
 }
