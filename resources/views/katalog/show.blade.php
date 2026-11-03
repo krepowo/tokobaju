@@ -347,7 +347,7 @@
         const btnBuyNow = document.getElementById('btnBuyNow');
         const selectedVariantInput = document.getElementById('selectedVariantId');
 
-        if (variant && variant.aktif && variant.stok > 0) {
+        if (variant && variant.stok > 0) {
             stockStatusDisplay.className = 'stock-status is-available';
             stockText.textContent = `Tersedia ${variant.stok} pcs`;
             selectedVariantInput.value = variant.id_ukuran;
