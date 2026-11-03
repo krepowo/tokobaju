@@ -3,16 +3,20 @@
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\JasaPengirimanController;
 use App\Http\Controllers\Admin\KategoriController;
+use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Admin\PembayaranController as PembayaranAdminController;
 use App\Http\Controllers\Admin\PengirimanController;
 use App\Http\Controllers\Admin\PesananController as PesananAdminController;
 use App\Http\Controllers\Admin\ProdukController;
 use App\Http\Controllers\Admin\StokController;
+use App\Http\Controllers\Admin\UlasanController as UlasanAdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\KatalogController;
 use App\Http\Controllers\KeranjangController;
 use App\Http\Controllers\PesananController;
+use App\Http\Controllers\ProfilController;
+use App\Http\Controllers\UlasanProdukController;
 use App\Models\Kategori;
 use App\Models\Produk;
 use Illuminate\Support\Facades\Route;
@@ -57,6 +61,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/pesanan/{pesanan}/upload-bukti', [PesananController::class, 'uploadBukti'])->name('pesanan.upload-bukti');
     Route::post('/pesanan/{pesanan}/bayar', [PesananController::class, 'uploadBukti'])->name('pesanan.bayar');
     Route::post('/pesanan/{pesanan}/konfirmasi-terima', [PesananController::class, 'konfirmasiTerima'])->name('pesanan.konfirmasi-terima');
+
+    // Profil pelanggan (F-02) + Beri Ulasan (F-11)
+    Route::get('/profil', [ProfilController::class, 'show'])->name('profil.index');
+    Route::put('/profil', [ProfilController::class, 'update'])->name('profil.update');
+    Route::get('/pesanan/ulasan/{detail}', [UlasanProdukController::class, 'create'])->name('ulasan.create');
+    Route::post('/pesanan/ulasan/{detail}', [UlasanProdukController::class, 'store'])->name('ulasan.store');
 });
 
 // =========================================================================
@@ -122,4 +132,12 @@ Route::middleware(['auth', 'role:penjual'])
         Route::get('/verifikasi/{pembayaran}', [PembayaranAdminController::class, 'show'])->name('verifikasi.show');
         Route::post('/verifikasi/{pembayaran}/setujui', [PembayaranAdminController::class, 'setujui'])->name('verifikasi.setujui');
         Route::post('/verifikasi/{pembayaran}/tolak', [PembayaranAdminController::class, 'tolak'])->name('verifikasi.tolak');
+
+        // Ulasan Pembeli (F-18) + Laporan Omzet (F-19)
+        Route::get('/ulasan', [UlasanAdminController::class, 'index'])->name('ulasan.index');
+        Route::get('/ulasan/ekspor', [UlasanAdminController::class, 'ekspor'])->name('ulasan.ekspor');
+        Route::get('/ulasan/{produk}', [UlasanAdminController::class, 'show'])->name('ulasan.show');
+
+        Route::get('/laporan/cetak', [LaporanController::class, 'cetak'])->name('laporan.cetak');
+        Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     });

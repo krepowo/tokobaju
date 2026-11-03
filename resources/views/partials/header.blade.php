@@ -78,6 +78,7 @@
                         @if (auth()->user()->isPenjual())
                             <a href="{{ route('admin.dashboard') }}">Halaman Penjual</a>
                         @endif
+                        <a href="{{ route('profil.index') }}">Profil Saya</a>
                         <a href="{{ route('keranjang.index') }}">Keranjang Belanja</a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf

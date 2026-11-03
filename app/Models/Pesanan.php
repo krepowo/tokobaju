@@ -13,6 +13,14 @@ class Pesanan extends Model
 {
     use HasFactory, HasUuids;
 
+    public const MENUNGGU_PEMBAYARAN = 'menunggu_pembayaran';
+    public const MENUNGGU_VERIFIKASI = 'menunggu_verifikasi';
+    public const PEMBAYARAN_DITOLAK = 'pembayaran_ditolak';
+    public const DIPROSES = 'diproses';
+    public const DIKIRIM = 'dikirim';
+    public const SELESAI = 'selesai';
+    public const DIBATALKAN = 'dibatalkan';
+
     protected $table = 'pesanan';
     protected $primaryKey = 'id_pesanan';
     public $incrementing = false;
@@ -95,5 +103,47 @@ class Pesanan extends Model
     public function pengiriman(): HasOne
     {
         return $this->hasOne(Pengiriman::class, 'id_pesanan', 'id_pesanan');
+    }
+
+    /** Alias agar laporan/ulasan memakai ->pelanggan. */
+    public function pelanggan(): BelongsTo
+    {
+        return $this->user();
+    }
+
+    public function scopeStatus($query, ?string $status)
+    {
+        return $status ? $query->where('status', $status) : $query;
+    }
+
+    /** Pesanan yang dianggap menghasilkan omzet: pembayaran sudah disetujui. */
+    public function scopeTerbayar($query)
+    {
+        return $query->whereIn('status', [self::DIPROSES, self::DIKIRIM, self::SELESAI])
+            ->whereHas('pembayaran', fn ($q) => $q->where('status_verifikasi', 'disetujui'));
+    }
+
+    public function sudahKedaluwarsa(): bool
+    {
+        return $this->status === self::MENUNGGU_PEMBAYARAN
+            && $this->batas_bayar !== null
+            && $this->batas_bayar->isPast();
+    }
+
+    public function sisaWaktu(): ?string
+    {
+        if ($this->batas_bayar === null) {
+            return null;
+        }
+
+        if ($this->batas_bayar->isPast()) {
+            return 'Kedaluwarsa';
+        }
+
+        return $this->batas_bayar->diffForHumans(now(), [
+            'parts' => 2,
+            'short' => true,
+            'syntax' => \Carbon\CarbonInterface::DIFF_ABSOLUTE,
+        ]);
     }
 }

@@ -35,6 +35,8 @@
                     'pesanan' => 'admin.pesanan.index',
                     'kirim' => 'admin.pengiriman.index',
                     'bayar' => 'admin.verifikasi.index',
+                    'ulasan' => 'admin.ulasan.index',
+                    'omzet' => 'admin.laporan.index',
                 ][$item['key']] ?? null;
 
                 $aktif = $nav === $item['key']
