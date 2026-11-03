@@ -34,11 +34,11 @@ class StokController extends Controller
             ->withQueryString();
 
         foreach ($daftarProduk as $produk) {
-            $aktif = $produk->varianUkuran->where('aktif', true);
-
-            $produk->total_stok = (int) $aktif->sum('stok');
-            $produk->jumlah_warna = $aktif->pluck('warna')->unique()->count();
-            $produk->daftar_warna = self::urutkan($aktif->pluck('warna')->unique()->all());
+            // Total & warna dihitung dari SEMUA varian (bukan hanya aktif),
+            // supaya stok yang tersimpan walau varian nonaktif tetap terlihat.
+            $produk->total_stok = (int) $produk->varianUkuran->sum('stok');
+            $produk->jumlah_warna = $produk->varianUkuran->pluck('warna')->unique()->count();
+            $produk->daftar_warna = self::urutkan($produk->varianUkuran->pluck('warna')->unique()->all());
             $produk->daftar_ukuran = self::urutkan($produk->varianUkuran->pluck('ukuran')->unique()->all());
         }
 
