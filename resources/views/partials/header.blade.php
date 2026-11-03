@@ -19,7 +19,7 @@
                 Kategori
                 <img class="hdr-nav__caret" src="{{ asset('images/figma/home/ico-arrow-down.svg') }}" alt="">
             </a>
-            <a href="#" class="is-disabled" title="Segera hadir">Pesanan Saya</a>
+            <a href="{{ auth()->check() ? route('pesanan.index') : route('login') }}" class="{{ $active === 'pesanan' ? 'is-active' : '' }}">Pesanan Saya</a>
         </nav>
 
         <div class="hdr-actions">
@@ -28,7 +28,7 @@
             </button>
 
             @auth
-                <a href="{{ auth()->user()->isPenjual() ? route('admin.dashboard') : route('home') }}" class="hdr-cta">
+                <a href="{{ auth()->user()->isPenjual() ? route('admin.dashboard') : route('profil.index') }}" class="hdr-cta">
                     Halo, {{ $firstName }}
                 </a>
                 <form method="POST" action="{{ route('logout') }}">
@@ -49,6 +49,6 @@
         <a href="{{ route('home') }}" class="{{ $active === 'beranda' ? 'is-active' : '' }}">Beranda</a>
         <a href="{{ route('katalog') }}" class="{{ $active === 'katalog' ? 'is-active' : '' }}">Katalog</a>
         <a href="#" class="is-disabled">Kategori</a>
-        <a href="#" class="is-disabled">Pesanan Saya</a>
+        <a href="{{ auth()->check() ? route('pesanan.index') : route('login') }}" class="{{ $active === 'pesanan' ? 'is-active' : '' }}">Pesanan Saya</a>
     </nav>
 </header>

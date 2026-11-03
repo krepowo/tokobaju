@@ -108,7 +108,7 @@ http://tokobajuonline.test
 | Role | Email | Kata sandi |
 |---|---|---|
 | Pelanggan | `annisa.ayu@gmail.com` | `password` |
-| Penjual (admin) | `admin@gavin.test` | `password` |
+| Penjual (admin) | `admin@gavin.test` | `admin123` |
 
 ## Catatan Penting
 

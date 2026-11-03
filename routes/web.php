@@ -13,6 +13,9 @@ use App\Http\Controllers\Admin\VerifikasiController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KatalogController;
+use App\Http\Controllers\PesananPelangganController;
+use App\Http\Controllers\ProfilController;
+use App\Http\Controllers\UlasanProdukController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -33,6 +36,23 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
+
+/*
+|--------------------------------------------------------------------------
+| Halaman Pelanggan (butuh login)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->group(function () {
+    Route::get('/pesanan', [PesananPelangganController::class, 'index'])->name('pesanan.index');
+    Route::get('/pesanan/{pesanan}/invoice', [PesananPelangganController::class, 'invoice'])->name('pesanan.invoice');
+    Route::post('/pesanan/{pesanan}/terima', [PesananPelangganController::class, 'terima'])->name('pesanan.terima');
+
+    Route::get('/pesanan/ulasan/{detail}', [UlasanProdukController::class, 'create'])->name('ulasan.create');
+    Route::post('/pesanan/ulasan/{detail}', [UlasanProdukController::class, 'store'])->name('ulasan.store');
+
+    Route::get('/profil', [ProfilController::class, 'show'])->name('profil.index');
+    Route::put('/profil', [ProfilController::class, 'update'])->name('profil.update');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -88,6 +108,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:penjual'])->gr
 
     // Ulasan pelanggan
     Route::get('/ulasan', [AdminUlasanController::class, 'index'])->name('ulasan.index');
+    Route::get('/ulasan/ekspor', [AdminUlasanController::class, 'ekspor'])->name('ulasan.ekspor');
     Route::get('/ulasan/{produk}', [AdminUlasanController::class, 'show'])->name('ulasan.show');
 
     // Laporan omzet

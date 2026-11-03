@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Beranda') &middot; Gavin Fashion Store</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    @stack('styles')
 </head>
 <body class="site-body">
     @include('partials.header', ['active' => trim($__env->yieldContent('active'))])
@@ -20,5 +21,6 @@
     @include('partials.footer')
 
     <script src="{{ asset('js/app.js') }}"></script>
+    @stack('scripts')
 </body>
 </html>

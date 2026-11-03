@@ -64,6 +64,11 @@ class User extends Authenticatable
         return $this->role === self::ROLE_PENJUAL;
     }
 
+    public function pesanan()
+    {
+        return $this->hasMany(Pesanan::class, 'id_user', 'id_user');
+    }
+
     public function isPelanggan(): bool
     {
         return $this->role === self::ROLE_PELANGGAN;

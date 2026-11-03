@@ -1,0 +1,182 @@
+/* ==========================================================================
+   Gavin Fashion Store — halaman pelanggan (Pesanan Saya, Ulasan, Profil)
+   Mengikuti frame Figma: kartu putih radius 16, aksen emas, latar #f7f8fa.
+   ========================================================================== */
+
+.ps-page { background: #f7f8fa; }
+
+.ps-wrap { max-width: 1184px; margin: 0 auto; padding: 36px 48px 72px; }
+
+.ps-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 22px; }
+.ps-title { margin: 0; font-size: 30px; line-height: 1.2; font-weight: 700; letter-spacing: -.6px; color: #111111; }
+.ps-count { font-size: 14px; color: #6b7280; margin-top: 6px; }
+.ps-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: #9ca3af; margin-bottom: 8px; }
+
+/* --- filter status ------------------------------------------------------- */
+.ps-tabs { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid #e5e7eb; padding-bottom: 14px; margin-bottom: 22px; }
+.ps-tabs::-webkit-scrollbar { display: none; }
+.ps-tab {
+    display: inline-flex; align-items: center; gap: 7px;
+    height: 34px; padding: 0 11px; border-radius: 999px; flex: 0 0 auto; white-space: nowrap;
+    font-size: 12.5px; font-weight: 500; color: #6b7280;
+    background: #fff; border: 1px solid #e5e7eb; text-decoration: none;
+    transition: all .15s;
+}
+.ps-tab:hover { border-color: #d1d5db; color: #111; }
+.ps-tab.is-active { background: #111; border-color: #111; color: #fff; font-weight: 600; box-shadow: 0 0 0 3px rgba(255, 213, 119, .45); }
+.ps-tab__count { font-size: 11px; font-weight: 600; background: #f2f4f6; color: #6b7280; border-radius: 999px; padding: 2px 7px; }
+.ps-tab.is-active .ps-tab__count { background: rgba(255, 255, 255, .18); color: #fff; }
+
+/* --- kartu pesanan ------------------------------------------------------- */
+.ps-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; box-shadow: 0 1px 2px rgba(10, 10, 11, .04), 0 18px 40px -32px rgba(10, 10, 11, .35); overflow: hidden; }
+.ps-card + .ps-card { margin-top: 18px; }
+
+.ps-card__head { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 24px; border-bottom: 1px solid #f3f4f6; flex-wrap: wrap; }
+.ps-invoice { font-size: 14px; font-weight: 700; color: #111; }
+.ps-invoice span { font-weight: 400; color: #6b7280; }
+
+.ps-status { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 600; padding: 4px 11px; border-radius: 999px; border: 1px solid transparent; }
+.ps-status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.ps-status--warn { background: #fffbeb; color: #b45309; border-color: #fde68a; }
+.ps-status--info { background: #eff6ff; color: #1d4ed8; border-color: #d3e1fb; }
+.ps-status--purple { background: #faf5ff; color: #7e22ce; border-color: #eee0fb; }
+.ps-status--indigo { background: #eef2ff; color: #4338ca; border-color: #dfe3fd; }
+.ps-status--success { background: #ecfdf3; color: #067647; border-color: #c7ecd8; }
+.ps-status--danger { background: #fef3f2; color: #b42318; border-color: #f6d3cf; }
+.ps-status--muted { background: #f2f4f6; color: #6b7280; border-color: #e7e8ea; }
+
+.ps-item { display: flex; gap: 16px; padding: 18px 24px; border-bottom: 1px solid #f6f7f8; }
+.ps-item:last-of-type { border-bottom: 0; }
+.ps-item__thumb { width: 72px; height: 72px; border-radius: 10px; object-fit: cover; background: #f2f4f6; flex: 0 0 72px; }
+.ps-item__body { flex: 1 1 auto; min-width: 0; }
+.ps-item__name { font-size: 14px; font-weight: 600; color: #111; }
+.ps-item__meta { font-size: 12.5px; color: #6b7280; margin-top: 4px; }
+.ps-item__right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.ps-item__qty { font-size: 12px; color: #6b7280; }
+.ps-item__price { font-size: 14px; font-weight: 700; color: #111; }
+
+.ps-shipping { margin: 0 24px 18px; background: #f7f8fa; border: 1px solid #eef0f2; border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.ps-shipping__left { display: flex; align-items: flex-start; gap: 10px; font-size: 12.5px; color: #374151; }
+.ps-shipping__check { color: #067647; flex: 0 0 auto; margin-top: 1px; }
+.ps-shipping__ok { color: #067647; font-weight: 500; }
+.ps-shipping__right { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #374151; }
+.ps-copy { display: inline-flex; align-items: center; gap: 4px; background: none; border: 0; padding: 0; font: inherit; color: #8a6a12; font-weight: 600; cursor: pointer; }
+.ps-copy:hover { color: #6b5209; }
+.ps-copy.is-copied { color: #067647; }
+
+.ps-card__foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 24px; border-top: 1px solid #f3f4f6; flex-wrap: wrap; }
+.ps-total { font-size: 13px; color: #6b7280; }
+.ps-total strong { display: block; font-size: 17px; color: #111; margin-top: 3px; letter-spacing: -.3px; }
+.ps-received { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #067647; margin-top: 6px; }
+
+.ps-empty { background: #fff; border: 1px dashed #d7d9dd; border-radius: 16px; padding: 56px 24px; text-align: center; }
+.ps-empty strong { display: block; font-size: 15px; color: #111; margin-bottom: 6px; }
+.ps-empty p { margin: 0 0 18px; font-size: 13px; color: #6b7280; }
+
+/* --- ringkasan ulasan (kartu ringkas di form) ---------------------------- */
+.ps-form-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 22px; }
+.ps-order-ref { font-size: 12.5px; color: #6b7280; display: flex; align-items: center; gap: 10px; }
+
+.ps-form-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; box-shadow: 0 1px 2px rgba(10, 10, 11, .04), 0 24px 56px -40px rgba(10, 10, 11, .35); padding: 32px; max-width: 1000px; }
+
+.ps-produk { display: flex; align-items: center; gap: 16px; background: #f7f8fa; border-radius: 14px; padding: 16px; flex-wrap: wrap; }
+.ps-produk__thumb { width: 76px; height: 76px; border-radius: 12px; object-fit: cover; background: #eceff2; flex: 0 0 76px; }
+.ps-produk__body { flex: 1 1 220px; min-width: 0; }
+.ps-produk__name { font-size: 17px; font-weight: 600; color: #111; }
+.ps-produk__meta { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12.5px; color: #6b7280; margin-top: 6px; }
+.ps-produk__inv { font-size: 11.5px; font-weight: 600; letter-spacing: .3px; color: #6b7280; background: #eceff2; border-radius: 999px; padding: 5px 10px; }
+
+.ps-field { margin-top: 24px; }
+.ps-label-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.ps-label { font-size: 14px; font-weight: 600; color: #111; }
+.ps-label .req { color: #dc2626; }
+.ps-hint { font-size: 12px; color: #9ca3af; }
+
+.ps-rating { display: flex; align-items: center; justify-content: space-between; gap: 16px; background: #f7f8fa; border: 1px solid #eef0f2; border-radius: 12px; padding: 14px 16px; flex-wrap: wrap; }
+.ps-stars { display: flex; gap: 6px; }
+.ps-star { background: none; border: 0; padding: 2px; cursor: pointer; color: #d1d5db; line-height: 0; transition: transform .1s, color .1s; }
+.ps-star:hover { transform: scale(1.08); }
+.ps-star.is-on { color: #f0b429; }
+.ps-rating__status { font-size: 11px; font-weight: 600; letter-spacing: .8px; text-transform: uppercase; color: #9ca3af; }
+.ps-rating__status.is-set { color: #8a6a12; }
+
+.ps-textarea { width: 100%; min-height: 140px; resize: vertical; border: 1px solid #eef0f2; border-radius: 12px; background: #f7f8fa; padding: 14px 16px; font: inherit; font-size: 13.5px; color: #111; outline: none; transition: border-color .15s, box-shadow .15s; }
+.ps-textarea:focus { border-color: #d8c58a; box-shadow: 0 0 0 3px rgba(255, 213, 119, .35); background: #fff; }
+.ps-textarea::placeholder { color: #9ca3af; }
+.ps-note { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #6b7280; margin-top: 10px; }
+
+.ps-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 28px; padding-top: 22px; border-top: 1px solid #f3f4f6; flex-wrap: wrap; }
+
+/* --- profil -------------------------------------------------------------- */
+.ps-profil { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 28px; align-items: start; }
+
+.ps-side { background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 28px 22px; text-align: center; box-shadow: 0 1px 2px rgba(10, 10, 11, .04); }
+.ps-avatar { width: 108px; height: 108px; border-radius: 50%; margin: 0 auto 16px; display: grid; place-items: center; background: #f7d774; color: #6b4f00; font-size: 36px; font-weight: 700; letter-spacing: -.5px; }
+.ps-side__name { font-size: 20px; font-weight: 700; color: #111; }
+.ps-side__email { font-size: 13px; color: #6b7280; margin-top: 4px; word-break: break-word; }
+.ps-side__since { font-size: 12px; color: #9ca3af; margin-top: 8px; }
+.ps-side__menu { margin-top: 22px; border-top: 1px solid #f1f2f4; padding-top: 16px; display: flex; flex-direction: column; gap: 4px; text-align: left; }
+.ps-side__link { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 10px; font-size: 13.5px; font-weight: 500; color: #374151; text-decoration: none; position: relative; }
+.ps-side__link:hover { background: #f7f8fa; }
+.ps-side__link.is-active { background: #f3f4f6; color: #111; font-weight: 600; }
+.ps-side__link.is-active::before { content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px; border-radius: 0 3px 3px 0; background: var(--gold, #ffd577); }
+.ps-side__link .chev { margin-left: auto; color: #9ca3af; }
+.ps-side__link--danger { color: #dc2626; }
+.ps-side__link--danger:hover { background: #fef2f2; }
+
+.ps-panel { background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; box-shadow: 0 1px 2px rgba(10, 10, 11, .04); overflow: hidden; }
+.ps-panel + .ps-panel { margin-top: 20px; }
+.ps-panel__head { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 24px; border-bottom: 1px solid #f3f4f6; flex-wrap: wrap; }
+.ps-panel__title { font-size: 17px; font-weight: 700; color: #111; }
+.ps-panel__body { padding: 22px 24px; }
+
+.ps-grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px 24px; }
+.ps-grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 24px; }
+.ps-dt label { display: block; font-size: 12px; color: #6b7280; margin-bottom: 4px; }
+.ps-dt p { margin: 0; font-size: 15px; color: #111; font-weight: 500; word-break: break-word; }
+
+.ps-badge-utama { font-size: 10.5px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: #4b5563; background: #eceff2; border-radius: 999px; padding: 5px 10px; }
+.ps-note-italic { display: flex; align-items: center; gap: 8px; font-size: 12px; font-style: italic; color: #9ca3af; margin-top: 18px; }
+
+.ps-input { width: 100%; height: 42px; border: 1px solid #e5e7eb; border-radius: 10px; background: #fff; padding: 0 12px; font: inherit; font-size: 13.5px; color: #111; outline: none; }
+.ps-input:focus { border-color: #d8c58a; box-shadow: 0 0 0 3px rgba(255, 213, 119, .35); }
+.ps-input--err { border-color: #f0a9a2; }
+.ps-err { display: block; font-size: 11.5px; color: #b42318; margin-top: 4px; }
+.ps-field label { display: block; font-size: 12px; color: #6b7280; margin-bottom: 6px; font-weight: 500; }
+
+.ps-alert { border-radius: 12px; padding: 14px 16px; font-size: 13px; margin-bottom: 20px; border: 1px solid transparent; }
+.ps-alert--success { background: #ecfdf3; border-color: #c7ecd8; color: #067647; }
+.ps-alert--error { background: #fef3f2; border-color: #f6d3cf; color: #b42318; }
+.ps-alert ul { margin: 6px 0 0; padding-left: 18px; }
+
+/* --- invoice pelanggan --------------------------------------------------- */
+.ps-invoice-card { max-width: 860px; margin: 0 auto; background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 32px; }
+.ps-invoice-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding-bottom: 20px; border-bottom: 2px solid #111; }
+.ps-invoice-brand { display: flex; align-items: center; gap: 12px; }
+.ps-invoice-mark { width: 42px; height: 42px; border-radius: 10px; display: grid; place-items: center; font-weight: 700; font-size: 18px; background: linear-gradient(135deg, #ffdf9c 0%, #ffd577 55%, #c9a349 100%); color: #3d2c00; }
+.ps-invoice-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px; }
+.ps-invoice-table th { text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: .5px; color: #6b7280; border-bottom: 1px solid #e5e7eb; padding: 8px 0; }
+.ps-invoice-table td { padding: 12px 0; border-bottom: 1px solid #f3f4f6; }
+.ps-invoice-table .r { text-align: right; }
+.ps-invoice-totals { margin-left: auto; width: 300px; margin-top: 16px; }
+.ps-invoice-totals .row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; color: #374151; }
+.ps-invoice-totals .row--big { border-top: 1px solid #111; margin-top: 6px; padding-top: 10px; font-size: 16px; font-weight: 700; color: #111; }
+
+@media (max-width: 1000px) {
+    .ps-wrap { padding: 28px 24px 56px; }
+    .ps-profil { grid-template-columns: minmax(0, 1fr); }
+    .ps-grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+    .ps-grid-3, .ps-grid-2 { grid-template-columns: minmax(0, 1fr); }
+    .ps-item { flex-wrap: wrap; }
+    .ps-item__right { align-items: flex-start; text-align: left; }
+    .ps-form-card { padding: 20px; }
+}
+
+@media print {
+    .site-header, .site-footer, .ps-actions, .ps-no-print { display: none !important; }
+    .ps-wrap { padding: 0; max-width: none; }
+    .ps-invoice-card { border: 0; box-shadow: none; padding: 0; }
+    body { background: #fff; }
+}

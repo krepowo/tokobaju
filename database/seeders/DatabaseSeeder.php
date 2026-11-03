@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
             [
                 'nama' => 'Admin Gavin',
                 'no_telepon' => '081200000001',
-                'password' => 'password',
+                'password' => 'admin123',
                 'role' => User::ROLE_PENJUAL,
             ]
         );
