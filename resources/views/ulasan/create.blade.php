@@ -36,7 +36,7 @@
                 @csrf
 
                 <div class="ps-produk">
-                    <img src="{{ asset($produk?->gambar ?? 'images/produk/placeholder.png') }}" alt="" class="ps-produk__thumb">
+                    <img src="{{ $produk?->gambar_url ?? asset('images/prod-kaos.jpg') }}" alt="{{ $produk?->nama_produk ?? '' }}" class="ps-produk__thumb">
                     <div class="ps-produk__body">
                         <div class="ps-produk__name">{{ $produk?->nama_produk ?? 'Produk' }}</div>
                         <div class="ps-produk__meta">
