@@ -86,9 +86,13 @@
                             <span class="product-item__category">{{ strtoupper($prod->kategori?->nama_kategori ?? 'FASHION') }}</span>
                             <h3 class="product-item__name">{{ $prod->nama_produk }}</h3>
                             <div class="product-item__rating">
-                                <span class="product-item__star" aria-hidden="true">&#9733;</span>
-                                <span class="product-item__score">{{ number_format($prod->rating_rata_rata, 1, ',', '.') }}</span>
-                                <span class="product-item__count">({{ $prod->total_ulasan }})</span>
+                                @if ($prod->total_ulasan > 0)
+                                    <span class="product-item__star" aria-hidden="true">&#9733;</span>
+                                    <span class="product-item__score">{{ number_format($prod->rating_rata_rata, 1, ',', '.') }}</span>
+                                    <span class="product-item__count">({{ $prod->total_ulasan }})</span>
+                                @else
+                                    <span class="product-item__count">Belum ada ulasan</span>
+                                @endif
                             </div>
                             <div class="product-item__price">{{ $prod->harga_formatted }}</div>
                         </div>

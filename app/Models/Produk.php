@@ -91,7 +91,7 @@ class Produk extends Model
     public function getRatingRataRataAttribute(): float
     {
         $avg = $this->ulasan()->avg('rating');
-        return $avg ? round((float) $avg, 1) : 4.8;
+        return $avg ? round((float) $avg, 1) : 0.0;
     }
 
     /**

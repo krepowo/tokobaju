@@ -158,7 +158,7 @@ class KatalogController extends Controller
 
         // Statistik ulasan pembeli dinamis dari database produk
         $totalUlasan = $produk->ulasan->count();
-        $avgRating = $totalUlasan > 0 ? round((float) $produk->ulasan->avg('rating'), 1) : 4.8;
+        $avgRating = $totalUlasan > 0 ? round((float) $produk->ulasan->avg('rating'), 1) : 0.0;
         $effectiveTotal = $totalUlasan;
 
         $starCounts = [

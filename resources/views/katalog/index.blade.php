@@ -180,9 +180,13 @@
                                     <span class="katalog-card__category">{{ strtoupper($item->kategori?->nama_kategori ?? 'FASHION') }}</span>
                                     <h3 class="katalog-card__name">{{ $item->nama_produk }}</h3>
                                     <div class="katalog-card__rating">
-                                        <span class="katalog-card__star" aria-hidden="true">&#9733;</span>
-                                        <span class="katalog-card__score">{{ number_format($item->rating_rata_rata, 1, ',', '.') }}</span>
-                                        <span class="katalog-card__count">({{ $item->total_ulasan }})</span>
+                                        @if ($item->total_ulasan > 0)
+                                            <span class="katalog-card__star" aria-hidden="true">&#9733;</span>
+                                            <span class="katalog-card__score">{{ number_format($item->rating_rata_rata, 1, ',', '.') }}</span>
+                                            <span class="katalog-card__count">({{ $item->total_ulasan }})</span>
+                                        @else
+                                            <span class="katalog-card__count">Belum ada ulasan</span>
+                                        @endif
                                     </div>
                                     <div class="katalog-card__price">{{ $item->harga_formatted }}</div>
                                 </div>
