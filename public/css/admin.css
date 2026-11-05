@@ -2109,3 +2109,107 @@ a { color: inherit; text-decoration: none; }
     .verif-kiri,
     .verif-kanan { gap: 14px; }
 }
+/* ==========================================================================
+   Ulasan Pembeli + Laporan Omzet — revisi Figma (206:6036 & 206:6484)
+   ========================================================================== */
+
+/* --- Page head (judul + aksi) --- */
+.page-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 20px; }
+.page-head__title h1 { font-size: 22px; font-weight: 700; letter-spacing: -.02em; color: var(--ink); margin: 0 0 4px; line-height: 1.2; }
+.page-head__sub { font-size: 13px; color: var(--muted); margin: 0; }
+.page-head__actions { display: flex; align-items: center; gap: 10px; flex: none; }
+.fin-label { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+
+/* --- Rating summary dashboard --- */
+.rating-dashboard { display: grid; grid-template-columns: 220px 1fr 250px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 1px 2px rgba(0,0,0,.04); overflow: hidden; margin-bottom: 20px; }
+.rating-score { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 24px; border-right: 1px solid var(--line); }
+.rating-score__value { font-size: 52px; font-weight: 800; line-height: 1; color: var(--ink); letter-spacing: -.04em; }
+.rating-score__stars { font-size: 17px; letter-spacing: 2px; line-height: 1.4; }
+.rating-score__stars .is-on { color: var(--gold); }
+.rating-score__stars .is-off { color: #dfe2e6; }
+.rating-score__note { font-size: 12px; color: var(--muted); text-align: center; line-height: 1.45; }
+.rating-bars { padding: 22px 26px; display: flex; flex-direction: column; justify-content: center; gap: 10px; }
+.rating-bars__head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 2px; }
+.rating-bars__head b { color: var(--ink); font-size: 16px; }
+.rating-bars__head span { color: var(--muted); font-size: 12px; }
+.rating-bar { display: flex; align-items: center; gap: 10px; }
+.rating-bar__label { width: 46px; color: var(--muted); font-size: 13px; white-space: nowrap; }
+.rating-bar .progress { flex: 1; margin-top: 0; }
+.rating-bar__count { width: 68px; text-align: right; color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.product-highlight { border-left: 1px solid var(--line); background: var(--line-soft); padding: 18px; display: flex; flex-direction: column; gap: 9px; }
+.product-highlight__flag { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted-soft); }
+.product-highlight img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); background: #fff; }
+.product-highlight__name { font-weight: 600; color: var(--ink); font-size: 14px; }
+.product-highlight__meta { font-size: 11px; color: var(--muted); }
+.product-highlight__foot { display: flex; align-items: baseline; justify-content: space-between; margin-top: auto; }
+.product-highlight__price { font-weight: 700; color: var(--gold-dark); font-size: 15px; }
+.product-highlight__sold { font-size: 11px; color: var(--muted); }
+
+/* --- Filter chips + toolbar ulasan --- */
+.review-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 16px; flex-wrap: wrap; }
+.filter-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.filter-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); color: var(--text); font-size: 12.5px; transition: .15s; }
+.filter-chip b { font-weight: 600; }
+.filter-chip:hover { border-color: var(--gold); }
+.filter-chip.is-active { background: var(--ink); border-color: var(--ink); color: #fff; }
+.review-toolbar .search-field { width: 260px; }
+
+/* --- Review cards --- */
+.review-list { display: flex; flex-direction: column; }
+.review-card { display: grid; grid-template-columns: auto 1fr; gap: 14px; padding: 18px 22px; border-bottom: 1px solid var(--line-soft); }
+.review-card:last-child { border-bottom: 0; }
+.avatar { width: 40px; height: 40px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: #fff; flex: none; }
+.review-card__top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.review-card__name { font-weight: 600; color: var(--ink); font-size: 14px; }
+.review-card__stars { color: var(--gold); font-size: 12px; letter-spacing: 1px; }
+.review-card__verified { font-size: 10px; font-weight: 600; color: var(--success); background: var(--success-soft); border: 1px solid #c7ecd8; padding: 1px 7px; border-radius: 5px; }
+.review-card__meta { font-size: 12px; color: var(--muted); margin-top: 1px; }
+.review-card__body { margin-top: 7px; font-size: 13.5px; color: var(--text); line-height: 1.6; white-space: pre-line; }
+
+/* --- KPI uppercase (laporan) --- */
+.stat-card--upper .stat-card__label { text-transform: uppercase; letter-spacing: .06em; font-size: 11px; }
+
+/* --- Rangking produk --- */
+.rank-list { list-style: none; margin: 0; padding: 0; }
+.rank-item { display: grid; grid-template-columns: 20px 42px 1fr auto; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line-soft); }
+.rank-item:last-child { border-bottom: 0; }
+.rank-item__no { font-weight: 700; color: var(--muted-soft); font-size: 13px; text-align: center; }
+.rank-item__thumb { width: 42px; height: 42px; border-radius: 8px; object-fit: cover; border: 1px solid var(--line); background: #fff; }
+.rank-item__name { font-weight: 600; color: var(--ink); font-size: 13.5px; line-height: 1.3; }
+.rank-item__sub { font-size: 11.5px; color: var(--muted); margin-top: 1px; }
+.rank-item__amt { text-align: right; font-weight: 700; color: var(--ink); font-size: 13.5px; font-variant-numeric: tabular-nums; line-height: 1.3; }
+.rank-item__pct { font-size: 11px; color: var(--muted); text-align: right; }
+
+/* --- Donut distribusi segmen --- */
+.donut-box { display: flex; align-items: center; gap: 28px; padding: 8px 6px 14px; }
+.donut { position: relative; width: 164px; height: 164px; border-radius: 50%; flex: none; background: #eef0f3; }
+.donut__hole { position: absolute; inset: 30px; background: var(--paper); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.donut__label { font-size: 9px; font-weight: 700; letter-spacing: .1em; color: var(--muted-soft); text-transform: uppercase; }
+.donut__total { font-weight: 800; font-size: 22px; color: var(--ink); line-height: 1.1; }
+.donut__sub { font-size: 11px; color: var(--muted); }
+.legend { list-style: none; margin: 0; padding: 0; flex: 1; }
+.legend li { display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; padding: 5px 0; gap: 10px; }
+.legend__name { color: var(--text); display: inline-flex; align-items: center; gap: 8px; flex: none; }
+.legend__dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.legend__pct { color: var(--muted); font-size: 11.5px; margin-left: auto; }
+.legend__val { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 12px; width: 92px; text-align: right; }
+
+/* --- Callout finansial --- */
+.callout { display: flex; gap: 10px; align-items: flex-start; background: var(--gold-soft); border: 1px solid var(--gold-line); border-radius: 10px; padding: 12px 14px; font-size: 12.5px; color: #6b5326; line-height: 1.55; }
+.callout svg { flex: none; margin-top: 1px; color: var(--gold-dark); }
+
+/* --- Responsif --- */
+@media (max-width: 1080px) {
+    .rating-dashboard { grid-template-columns: 1fr 1fr; }
+    .product-highlight { grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--line); }
+}
+@media (max-width: 640px) {
+    .rating-dashboard { grid-template-columns: 1fr; }
+    .rating-score { border-right: 0; border-bottom: 1px solid var(--line); }
+    .page-head { flex-direction: column; }
+    .donut-box { flex-direction: column; align-items: flex-start; }
+    .legend__val { width: auto; }
+}.plain-input { height: 36px; padding: 0 12px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--paper); font-family: inherit; font-size: 12.5px; color: var(--text); }
+.plain-input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-soft); }
+.laporan-cols { display: grid; grid-template-columns: 1.1fr 1fr; gap: 16px; margin-bottom: 18px; }
+@media (max-width: 900px) { .laporan-cols { grid-template-columns: 1fr; } }

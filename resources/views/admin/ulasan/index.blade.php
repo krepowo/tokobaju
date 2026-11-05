@@ -5,119 +5,159 @@
 @section('breadcrumb', 'Ulasan Pembeli')
 
 @section('content')
-    <div class="admin-toolbar">
-        <form method="GET" action="{{ route('admin.ulasan.index') }}" class="toolbar-filters">
-            <select name="produk" class="select-field" style="min-width:240px" onchange="this.form.submit()" aria-label="Pilih produk">
-                @forelse ($daftarProduk as $p)
-                    <option value="{{ $p->id_produk }}" @selected($produk && $p->id_produk === $produk->id_produk)>
-                        {{ $p->nama_produk }} ({{ $p->ulasan_count }})
-                    </option>
-                @empty
-                    <option value="">Belum ada ulasan</option>
-                @endforelse
-            </select>
+    @php
+        $inisial = function (string $nama): string {
+            $nama = trim($nama);
+            if ($nama === '') return '?';
+            $bagian = preg_split('/\s+/', $nama);
+            $a = mb_substr($bagian[0], 0, 1);
+            $b = count($bagian) > 1 ? mb_substr(end($bagian), 0, 1) : '';
+            return mb_strtoupper($a . $b);
+        };
+        $warna = function (string $nama): string {
+            $palet = ['#b88b42', '#dfb169', '#8a6d3b', '#c98d4e', '#a5844a', '#7a5c35'];
+            return $palet[abs(crc32($nama)) % count($palet)];
+        };
+    @endphp
 
-            <select name="bintang" class="select-field" onchange="this.form.submit()" aria-label="Filter bintang">
-                <option value="0">Semua bintang</option>
-                @for ($i = 5; $i >= 1; $i--)
-                    <option value="{{ $i }}" @selected($bintang === $i)>{{ $i }} bintang</option>
-                @endfor
-            </select>
-
-            <input type="search" name="q" value="{{ $q }}" class="search-field" placeholder="Cari komentar / nama pelanggan...">
-
+    <div class="page-head">
+        <div class="page-head__title">
+            <h1>Ulasan Pembeli</h1>
+            <p class="page-head__sub">Kelola evaluasi pelanggan, tanggapan seller, serta sentimen produk secara berkala.</p>
+        </div>
+        <div class="page-head__actions">
+            <form method="GET" action="{{ route('admin.ulasan.index') }}">
+                @if ($bintang)<input type="hidden" name="bintang" value="{{ $bintang }}">@endif
+                @if ($q !== '')<input type="hidden" name="q" value="{{ $q }}">@endif
+                <label class="select-field">
+                    <select name="produk" onchange="this.form.submit()" aria-label="Pilih produk">
+                        @foreach ($daftarProduk as $p)
+                            <option value="{{ $p->id_produk }}" @selected($produk && $p->id_produk === $produk->id_produk)>{{ $p->nama_produk }} ({{ $p->ulasan_count }})</option>
+                        @endforeach
+                    </select>
+                    <svg viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></svg>
+                </label>
+            </form>
             @if ($produk)
-                <a href="{{ route('admin.ulasan.ekspor', ['produk' => $produk->id_produk]) }}" class="btn-ghost">Ekspor CSV</a>
+                <a href="{{ route('admin.ulasan.ekspor', ['produk' => $produk->id_produk]) }}" class="btn-ghost">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+                    Ekspor CSV
+                </a>
             @endif
-        </form>
+        </div>
     </div>
 
     @if ($produk && $ringkasan)
-        <div class="stat-grid">
-            <article class="stat-card stat-card--accent">
-                <span class="stat-card__label">Rata-rata Rating</span>
-                <span class="stat-card__value">{{ number_format($ringkasan['rata_rata'], 1, ',', '.') }} &#9733;</span>
-                <span class="stat-card__hint">dari {{ $ringkasan['jumlah'] }} ulasan</span>
-            </article>
-            <article class="stat-card">
-                <span class="stat-card__label">Total Ulasan</span>
-                <span class="stat-card__value">{{ $ringkasan['jumlah'] }}</span>
-                <span class="stat-card__hint">{{ $produk->nama_produk }}</span>
-            </article>
-            <article class="stat-card">
-                <span class="stat-card__label">Puas (4&ndash;5 &#9733;)</span>
-                <span class="stat-card__value">{{ $ringkasan['puas'] }}%</span>
-                <span class="stat-card__hint">Pembeli menilai positif</span>
-            </article>
-            <article class="stat-card">
-                <span class="stat-card__label">Terjual</span>
-                <span class="stat-card__value">{{ $ringkasan['terjual'] }} pcs</span>
-                <span class="stat-card__hint">Total unit produk ini</span>
-            </article>
-        </div>
+        <div class="rating-dashboard">
+            <div class="rating-score">
+                @php $bintangPenuh = (int) round($ringkasan['rata_rata']); @endphp
+                <div class="rating-score__value">{{ number_format($ringkasan['rata_rata'], 1, ',', '.') }}</div>
+                <div class="rating-score__stars">
+                    @for ($s = 1; $s <= 5; $s++)
+                        <span class="{{ $s <= $bintangPenuh ? 'is-on' : 'is-off' }}">&#9733;</span>
+                    @endfor
+                </div>
+                <div class="rating-score__note">Berdasarkan {{ $ringkasan['jumlah'] }} ulasan<br>pembeli</div>
+            </div>
 
-        <section class="panel">
-            <header class="panel__head"><h2>Sebaran Bintang</h2></header>
-            <div style="padding:0 18px 18px">
+            <div class="rating-bars">
+                <div class="rating-bars__head">
+                    <b>{{ $ringkasan['puas'] }}% Puas</b>
+                    <span>Rating pembeli 4&ndash;5 bintang</span>
+                </div>
                 @for ($i = 5; $i >= 1; $i--)
                     @php
-                        $jml = (int) ($ringkasan['sebaran'][$i] ?? 0);
-                        $persen = $ringkasan['jumlah'] > 0 ? round($jml / $ringkasan['jumlah'] * 100) : 0;
+                        $c = (int) ($ringkasan['sebaran'][$i] ?? 0);
+                        $pct = $ringkasan['jumlah'] > 0 ? round($c / $ringkasan['jumlah'] * 100) : 0;
                     @endphp
-                    <div style="display:flex;align-items:center;gap:10px;margin:7px 0;font-size:13px">
-                        <span style="width:48px;color:var(--muted)">{{ $i }} &#9733;</span>
-                        <div class="progress" style="flex:1"><span style="width:{{ $persen }}%"></span></div>
-                        <span style="width:78px;text-align:right;color:var(--muted)">{{ $jml }} ({{ $persen }}%)</span>
+                    <div class="rating-bar">
+                        <span class="rating-bar__label">{{ $i }} &#9733;</span>
+                        <div class="progress"><span style="width:{{ $pct }}%"></span></div>
+                        <span class="rating-bar__count">{{ $c }} ({{ $pct }}%)</span>
                     </div>
                 @endfor
             </div>
-        </section>
+
+            <aside class="product-highlight">
+                <span class="product-highlight__flag">Produk Terpilih</span>
+                <img src="{{ $produk->gambar_url }}" alt="{{ $produk->nama_produk }}">
+                <span class="product-highlight__name">{{ $produk->nama_produk }}</span>
+                <span class="product-highlight__meta">{{ $produk->kategori?->nama_kategori ?? 'Fashion' }}</span>
+                <div class="product-highlight__foot">
+                    <span class="product-highlight__price">{{ $produk->harga_formatted }}</span>
+                    <span class="product-highlight__sold">Terjual {{ $ringkasan['terjual'] }}</span>
+                </div>
+            </aside>
+        </div>
+
+        <div class="review-toolbar">
+            <div class="filter-chips">
+                <a class="filter-chip {{ ! $bintang ? 'is-active' : '' }}"
+                   href="{{ route('admin.ulasan.index', array_filter(['produk' => $produk->id_produk, 'q' => $q !== '' ? $q : null])) }}">Semua <b>({{ $ringkasan['jumlah'] }})</b></a>
+                @for ($i = 5; $i >= 1; $i--)
+                    @php $c = (int) ($ringkasan['sebaran'][$i] ?? 0); @endphp
+                    <a class="filter-chip {{ $bintang === $i ? 'is-active' : '' }}"
+                       href="{{ route('admin.ulasan.index', array_filter(['produk' => $produk->id_produk, 'bintang' => $i, 'q' => $q !== '' ? $q : null])) }}">{{ $i }} Bintang <b>({{ $c }})</b></a>
+                @endfor
+            </div>
+
+            <form method="GET" action="{{ route('admin.ulasan.index') }}">
+                <input type="hidden" name="produk" value="{{ $produk->id_produk }}">
+                @if ($bintang)<input type="hidden" name="bintang" value="{{ $bintang }}">@endif
+                <label class="search-field">
+                    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+                    <input type="search" name="q" value="{{ $q }}" placeholder="Cari ulasan pembeli..." aria-label="Cari ulasan">
+                </label>
+            </form>
+        </div>
 
         <section class="panel">
             <header class="panel__head">
                 <h2>Daftar Ulasan</h2>
                 <span class="panel__meta">{{ $ulasan->total() }} ulasan</span>
             </header>
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Pelanggan</th>
-                        <th>Rating</th>
-                        <th>Ukuran / Warna</th>
-                        <th>Komentar</th>
-                        <th>Tanggal</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($ulasan as $u)
-                        <tr>
-                            <td>{{ $u->user?->nama ?? '—' }}</td>
-                            <td><span class="badge badge--selesai">{{ $u->rating }} &#9733;</span></td>
-                            <td class="cell-sub">{{ $u->detailPesanan?->ukuranStok?->ukuran ?? '—' }} / {{ $u->detailPesanan?->ukuranStok?->warna ?? '—' }}</td>
-                            <td class="cell-sub">{{ \Illuminate\Support\Str::limit($u->komentar, 90) ?: '—' }}</td>
-                            <td class="cell-sub">{{ $u->tanggal?->format('d M Y') ?? '—' }}</td>
-                        </tr>
-                    @empty
-                        <tr><td colspan="5" class="empty">Belum ada ulasan pada filter ini.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-
-            <div class="admin-pagination">
-                <span>Menampilkan {{ $ulasan->firstItem() ?? 0 }}–{{ $ulasan->lastItem() ?? 0 }} dari {{ $ulasan->total() }} ulasan</span>
-                <div class="admin-pagination__links">
-                    @if ($ulasan->onFirstPage())
-                        <span class="is-disabled">Sebelumnya</span>
-                    @else
-                        <a href="{{ $ulasan->previousPageUrl() }}">Sebelumnya</a>
-                    @endif
-                    @if ($ulasan->hasMorePages())
-                        <a href="{{ $ulasan->nextPageUrl() }}">Selanjutnya</a>
-                    @else
-                        <span class="is-disabled">Selanjutnya</span>
-                    @endif
-                </div>
+            <div class="review-list">
+                @forelse ($ulasan as $u)
+                    <article class="review-card">
+                        <span class="avatar" style="background: {{ $warna($u->user?->nama ?? '') }}">{{ $inisial($u->user?->nama ?? '') }}</span>
+                        <div>
+                            <div class="review-card__top">
+                                <span class="review-card__name">{{ $u->user?->nama ?? '—' }}</span>
+                                <span class="review-card__stars">@for ($s = 1; $s <= $u->rating; $s++)&#9733;@endfor</span>
+                                <span class="review-card__verified">Pembeli Terverifikasi</span>
+                            </div>
+                            <div class="review-card__meta">
+                                {{ $u->tanggal?->translatedFormat('d M Y') ?? '—' }}
+                                &bull; Ukuran: {{ $u->detailPesanan?->ukuranStok?->ukuran ?? '—' }}
+                                &middot; Warna: {{ $u->detailPesanan?->ukuranStok?->warna ?? '—' }}
+                            </div>
+                            @if ($u->komentar)
+                                <p class="review-card__body">{{ $u->komentar }}</p>
+                            @endif
+                        </div>
+                    </article>
+                @empty
+                    <p class="empty">Belum ada ulasan pada filter ini.</p>
+                @endforelse
             </div>
+
+            @if ($ulasan->hasPages())
+                <div class="admin-pagination">
+                    <span>Menampilkan {{ $ulasan->firstItem() ?? 0 }}&ndash;{{ $ulasan->lastItem() ?? 0 }} dari {{ $ulasan->total() }} ulasan</span>
+                    <div class="admin-pagination__links">
+                        @if ($ulasan->onFirstPage())
+                            <span class="is-disabled">Sebelumnya</span>
+                        @else
+                            <a href="{{ $ulasan->previousPageUrl() }}">Sebelumnya</a>
+                        @endif
+                        @if ($ulasan->hasMorePages())
+                            <a href="{{ $ulasan->nextPageUrl() }}">Selanjutnya</a>
+                        @else
+                            <span class="is-disabled">Selanjutnya</span>
+                        @endif
+                    </div>
+                </div>
+            @endif
         </section>
     @else
         <section class="panel"><p class="empty">Belum ada produk yang memiliki ulasan.</p></section>

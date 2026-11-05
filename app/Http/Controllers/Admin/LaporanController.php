@@ -94,6 +94,7 @@ class LaporanController extends Controller
                     'pcs' => 0,
                     'omzet' => 0.0,
                     'gambar' => $produk->gambar,
+                    'gambar_url' => $produk->gambar_url,
                 ];
                 $perProduk[$kunci]['pcs'] += (int) $d->jumlah;
                 $perProduk[$kunci]['omzet'] += $sub;
